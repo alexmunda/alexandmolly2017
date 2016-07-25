@@ -1,4 +1,5 @@
 import {resolve} from 'path';
+import webpack from 'webpack';
 import webpackValidator from 'webpack-validator';
 //import HtmlWebpackPlugin from 'html-webpack-plugin';
 
@@ -18,10 +19,14 @@ module.exports = () => {
       loaders: [
         {test: /\.js$/, loaders: ['babel'], exclude: /node_modules/},
         {test: /\.css$/, loaders: ['style', 'css']},
+        {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000'}
       ],
     },
-    // plugins: [
-    //   new HtmlWebpackPlugin({     // Create HTML file that includes references to bundled CSS and JS.
+    plugins: [
+      new webpack.ProvidePlugin({
+        'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+      })
+    //   // new HtmlWebpackPlugin({     // Create HTML file that includes references to bundled CSS and JS.
     //     template: '../index.html',
     //     minify: {
     //       removeComments: true,
@@ -29,6 +34,6 @@ module.exports = () => {
     //     },
     //     inject: true
     // })
-    // ]
+    ]
   });
 };
