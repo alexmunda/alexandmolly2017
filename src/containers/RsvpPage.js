@@ -17,6 +17,7 @@ class RsvpPage extends React.Component {
     };
 
     this.updateRsvp = this.updateRsvp.bind(this);
+    this.submitRsvp = this.submitRsvp.bind(this);
   }
 
   updateRsvp(rsvp) {
@@ -24,6 +25,7 @@ class RsvpPage extends React.Component {
   }
 
   submitRsvp() {
+    console.log('Submit: ', this.state.rsvp);
     // fetch('/api/rsvp', {
     //   method: 'POST',
     //   headers: {
@@ -45,7 +47,6 @@ class RsvpPage extends React.Component {
   render() {
     return (
       <div>
-        RSVP page
         <RsvpForm onChange={this.updateRsvp} onSubmit={this.submitRsvp} rsvp={this.state.rsvp}/>
       </div>
     );
