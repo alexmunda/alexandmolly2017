@@ -6,7 +6,9 @@ import webpackValidator from 'webpack-validator';
 module.exports = () => {
   return webpackValidator({
     debug: true,
-    entry: './index.js',
+    entry: [
+      './index.js'
+    ],
     output: {
       filename: 'bundle.js',
       path: resolve(__dirname, 'dist'),
@@ -18,7 +20,7 @@ module.exports = () => {
     devServer: {
       historyApiFallback: true,
       contentBase: './',
-      // hot: true
+      hot: true
     },
     module: {
       loaders: [{
@@ -36,6 +38,10 @@ module.exports = () => {
     plugins: [
       new webpack.ProvidePlugin({
         'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+      }),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('development'), // Tells React to build in either dev or prod modes. https://facebook.github.io/react/downloads.html (See bottom)
+        __DEV__: true
       })
       //   // new HtmlWebpackPlugin({     // Create HTML file that includes references to bundled CSS and JS.
       //     template: '../index.html',

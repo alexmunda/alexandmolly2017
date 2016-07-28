@@ -2,11 +2,11 @@ import React from 'react';
 import RsvpForm from '../components/RsvpForm';
 
 const RSVP_TEMPLATE = {
-  attending: true,
-  firstName: "",
-  lastName: "",
+  attending: 'true',
+  firstName: '',
+  lastName: '',
   guests: [],
-  foodChoice: ""
+  foodChoice: ''
 };
 
 class RsvpPage extends React.Component {
