@@ -36,11 +36,14 @@ module.exports = () => {
       }],
     },
     plugins: [
+      new webpack.HotModuleReplacementPlugin({
+        devServer: {hot: true}
+      }),
       new webpack.ProvidePlugin({
         'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
       }),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('development'), // Tells React to build in either dev or prod modes. https://facebook.github.io/react/downloads.html (See bottom)
+        'process.env.NODE_ENV': JSON.stringify('development'),
         __DEV__: true
       })
       //   // new HtmlWebpackPlugin({     // Create HTML file that includes references to bundled CSS and JS.

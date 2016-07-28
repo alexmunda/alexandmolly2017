@@ -26,11 +26,11 @@ const RsvpForm = (props) => {
     <div className="col-md-6 offset-3">
       <form className="contactForm" onSubmit={onSubmit} noValidate="true">
         <fieldset className="form-group">
-          <label htmlFor="rsvpFirstName">{FIRST_NAME_LABEL}</label>
+          <label>{FIRST_NAME_LABEL}</label>
           <input type="text" className="form-control" value={props.rsvp.firstName} placeholder="First Name" onChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
         </fieldset>
         <fieldset className="form-group">
-          <label htmlFor="rsvpLastName">{LAST_NAME_LABEL}</label>
+          <label>{LAST_NAME_LABEL}</label>
           <input type="text" className="form-control" value={props.rsvp.lastName} placeholder="Last Name" onChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
         </fieldset>
         <fieldset className="form-group">

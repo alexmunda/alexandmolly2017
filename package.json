@@ -4,7 +4,7 @@
   "description": "Alex and Molly wedding website",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.config.babel.js --progress --inline --hot",
+    "start": "webpack-dev-server --config webpack.dev.config.babel.js --progress --inline",
     "build": "webpack --config webpack.dev.config.babel.js",
     "test": "test",
     "lint": "eslint src/**",
