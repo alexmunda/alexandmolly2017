@@ -1,4 +1,6 @@
-import {resolve} from 'path';
+import {
+  resolve
+} from 'path';
 import webpack from 'webpack';
 import webpackValidator from 'webpack-validator';
 //import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -36,11 +38,11 @@ module.exports = () => {
       }],
     },
     plugins: [
-      new webpack.HotModuleReplacementPlugin({
-        devServer: {hot: true}
-      }),
       new webpack.ProvidePlugin({
-        'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+        'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch',
+        $: "jquery",
+        jQuery: "jquery",
+        "window.jQuery": "jquery"
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('development'),

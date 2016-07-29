@@ -4,11 +4,10 @@
   "description": "Alex and Molly wedding website",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.config.babel.js --progress --inline",
+    "start": "webpack-dev-server --config webpack.dev.config.babel.js --progress --inline --hot",
     "build": "webpack --config webpack.dev.config.babel.js",
     "test": "test",
-    "lint": "eslint src/**",
-    "generate": "rc-autocomplete"
+    "lint": "eslint src/**"
   },
   "repository": {
     "type": "git",
@@ -22,6 +21,7 @@
   "homepage": "https://github.com/alexmunda/alexandmolly2017#readme",
   "dependencies": {
     "bootstrap": "^3.3.6",
+    "jquery": "^3.1.0",
     "react": "15.2.1",
     "react-count-down": "1.0.3",
     "react-dom": "15.2.1",

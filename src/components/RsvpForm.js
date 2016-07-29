@@ -1,4 +1,6 @@
 import React, {PropTypes} from 'react';
+import RsvpTextInput from './RsvpTextInput';
+import RsvpRadioInput from './RsvpRadioInput';
 
 const FIRST_NAME_KEY = 'firstName';
 const LAST_NAME_KEY = 'lastName';
@@ -25,27 +27,11 @@ const RsvpForm = (props) => {
   return (
     <div className="col-md-6 offset-3">
       <form className="contactForm" onSubmit={onSubmit} noValidate="true">
+        <RsvpTextInput label={FIRST_NAME_LABEL} value={props.rsvp.firstName} placeholder="First Name" onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
+        <RsvpTextInput label={LAST_NAME_LABEL} value={props.rsvp.lastName} placeholder="Last Name" onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
         <fieldset className="form-group">
-          <label>{FIRST_NAME_LABEL}</label>
-          <input type="text" className="form-control" value={props.rsvp.firstName} placeholder="First Name" onChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
-        </fieldset>
-        <fieldset className="form-group">
-          <label>{LAST_NAME_LABEL}</label>
-          <input type="text" className="form-control" value={props.rsvp.lastName} placeholder="Last Name" onChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
-        </fieldset>
-        <fieldset className="form-group">
-          <div className="radio">
-            <label>
-              <input type="radio" className="optionsRadios" value={true} checked={props.rsvp.attending === 'true'} onChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
-              {ATTENDING_LABEL}
-            </label>
-          </div>
-          <div className="radio">
-            <label>
-              <input type="radio" className="optionsRadios" value={false} checked={props.rsvp.attending === 'false'} onChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
-              {NOT_ATTENDING_LABEL}
-            </label>
-          </div>
+          <RsvpRadioInput label={ATTENDING_LABEL} value={'true'} shouldBeChecked={props.rsvp.attending === 'true'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
+          <RsvpRadioInput label={NOT_ATTENDING_LABEL} value={'false'} shouldBeChecked={props.rsvp.attending === 'false'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
         </fieldset>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
