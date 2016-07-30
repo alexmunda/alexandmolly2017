@@ -20,11 +20,11 @@
   },
   "homepage": "https://github.com/alexmunda/alexandmolly2017#readme",
   "dependencies": {
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^3.3.7",
     "jquery": "^3.1.0",
-    "react": "15.2.1",
+    "react": "15.3.0",
     "react-count-down": "1.0.3",
-    "react-dom": "15.2.1",
+    "react-dom": "15.3.0",
     "react-router": "2.5.2",
     "whatwg-fetch": "^1.0.0"
   },

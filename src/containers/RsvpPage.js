@@ -46,8 +46,7 @@ class RsvpPage extends React.Component {
 
   render() {
     return (
-      <div>
-        <h3>Will you be attending?</h3>
+      <div className="container">
         <RsvpForm onChange={this.updateRsvp} onSubmit={this.submitRsvp} rsvp={this.state.rsvp}/>
       </div>
     );
