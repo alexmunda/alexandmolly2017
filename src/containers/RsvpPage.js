@@ -1,5 +1,6 @@
 import React from 'react';
 import RsvpForm from '../components/RsvpForm';
+import classNames from 'classnames';
 
 const RSVP_TEMPLATE = {
   attending: 'true',
@@ -45,8 +46,10 @@ class RsvpPage extends React.Component {
   }
 
   render() {
+    const containerClassname = classNames('container');
+
     return (
-      <div className="container">
+      <div className={containerClassname}>
         <RsvpForm onChange={this.updateRsvp} onSubmit={this.submitRsvp} rsvp={this.state.rsvp}/>
       </div>
     );

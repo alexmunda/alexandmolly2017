@@ -1,15 +1,20 @@
 import React, {PropTypes} from 'react';
+import classNames from 'classnames';
 import RsvpTextInput from './RsvpTextInput';
 import RsvpRadioInput from './RsvpRadioInput';
 import RsvpGuestInput from './RsvpGuestInput';
 import {
-  GUEST_TEMPLATE,
-  FIRST_NAME_LABEL,
-  FIRST_NAME_KEY,
-  LAST_NAME_LABEL,
-  LAST_NAME_KEY,
-  ATTENDING_LABEL,
+  ATTENDING_ID,
   ATTENDING_KEY,
+  ATTENDING_LABEL,
+  FIRST_NAME_ID,
+  FIRST_NAME_KEY,
+  FIRST_NAME_LABEL,
+  GUEST_TEMPLATE,
+  LAST_NAME_ID,
+  LAST_NAME_KEY,
+  LAST_NAME_LABEL,
+  NOT_ATTENDING_ID,
   NOT_ATTENDING_LABEL
 } from '../constants/formConstants';
 
@@ -62,25 +67,36 @@ const RsvpForm = ({rsvp, onChange, onSubmit}) => {
     onSubmit();
   };
 
+  const rowClassName = classNames('row');
+  const outerDivClassName = classNames('col', 's12');
+  const addGuestButtonClassname = classNames('btn', 'btn-default');
+  const submitButtonClassname = classNames('btn', 'waves-effect', 'waves-light');
+
   return (
-    <div className="col-md-4 col-md-offset-4">
-      <form className="contactForm" onSubmit={onRsvpSubmit} noValidate="true">
-        <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.firstName} placeholder="First Name" onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
-        <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.lastName} placeholder="Last Name" onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
-        <fieldset className="form-group">
-          <RsvpRadioInput label={ATTENDING_LABEL} value={'true'} shouldBeChecked={rsvp.attending === 'true'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
-          <RsvpRadioInput label={NOT_ATTENDING_LABEL} value={'false'} shouldBeChecked={rsvp.attending === 'false'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
-        </fieldset>
-        <fieldset className="form-group">
-          <label>Guests</label>
-          {rsvp.guests.map((guest, index) => {
-            return(<RsvpGuestInput onGuestInputChange={onGuestInputChange} onGuestDeleteClick={onGuestDeleteClick} id={index} guest={guest} key={index}/>);
-          })}
+    <div className={rowClassName}>
+      <div className={outerDivClassName}>
+        <form onSubmit={onRsvpSubmit} noValidate="true">
+          <div className={rowClassName}>
+            <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.firstName} id={FIRST_NAME_ID} onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
+            <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.lastName} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
+          </div>
+          <div className={rowClassName}>
+            <RsvpRadioInput label={ATTENDING_LABEL} value={'true'} id={ATTENDING_ID} shouldBeChecked={rsvp.attending === 'true'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
+            <RsvpRadioInput label={NOT_ATTENDING_LABEL} value={'false'} id={NOT_ATTENDING_ID} shouldBeChecked={rsvp.attending === 'false'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
+          </div>
+          <div className={rowClassName}>
+            <legend>Guests</legend>
+            {rsvp.guests.map((guest, index) => {
+              return (<RsvpGuestInput onGuestInputChange={onGuestInputChange} onGuestDeleteClick={onGuestDeleteClick} guestId={index} guest={guest} key={index}/>);
+            })}
+          </div>
           <br></br>
-          <button className="btn btn-info" onClick={onAddGuestClick}>Add Guest</button>
-        </fieldset>
-        <button type="submit" className="btn btn-primary">Submit</button>
-      </form>
+          <button className={addGuestButtonClassname} onClick={onAddGuestClick}>Add Guest</button>
+          <button type="submit" className={submitButtonClassname}>
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -2,7 +2,9 @@ import React from 'react';
 import {render} from 'react-dom';
 import {Router, browserHistory} from 'react-router';
 import routes from './routes';
-require("../node_modules/bootstrap/dist/css/bootstrap.css");
+import "materialize-css";
+require('../node_modules/material-icons/css/material-icons.min.css');
+require("../node_modules/materialize-css/bin/materialize.css");
 
 render(
   <Router history={browserHistory} routes={routes} />,
