@@ -69,8 +69,13 @@ const RsvpForm = ({rsvp, onChange, onSubmit}) => {
 
   const rowClassName = classNames('row');
   const outerDivClassName = classNames('col', 's12');
-  const addGuestButtonClassname = classNames('btn', 'btn-default');
-  const submitButtonClassname = classNames('btn', 'waves-effect', 'waves-light');
+  const guestsDivClassName = classNames({
+    'row': true,
+    'hidden': rsvp.guests.length < 1
+  });
+  const addGuestButtonClassName = classNames('btn', 'btn-default');
+  const sendIconClassName = classNames('material-icons', 'right');
+  const submitButtonClassName = classNames('btn', 'waves-effect', 'waves-light');
 
   return (
     <div className={rowClassName}>
@@ -81,20 +86,25 @@ const RsvpForm = ({rsvp, onChange, onSubmit}) => {
             <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.lastName} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
           </div>
           <div className={rowClassName}>
+            <label>Please let us know if you will be attending.</label>
             <RsvpRadioInput label={ATTENDING_LABEL} value={'true'} id={ATTENDING_ID} shouldBeChecked={rsvp.attending === 'true'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
             <RsvpRadioInput label={NOT_ATTENDING_LABEL} value={'false'} id={NOT_ATTENDING_ID} shouldBeChecked={rsvp.attending === 'false'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
           </div>
-          <div className={rowClassName}>
-            <legend>Guests</legend>
+          <div className={guestsDivClassName}>
+            <label>Guests</label>
             {rsvp.guests.map((guest, index) => {
               return (<RsvpGuestInput onGuestInputChange={onGuestInputChange} onGuestDeleteClick={onGuestDeleteClick} guestId={index} guest={guest} key={index}/>);
             })}
           </div>
-          <br></br>
-          <button className={addGuestButtonClassname} onClick={onAddGuestClick}>Add Guest</button>
-          <button type="submit" className={submitButtonClassname}>
-            Submit
-          </button>
+          <div className={rowClassName}>
+            <button className={addGuestButtonClassName} onClick={onAddGuestClick}>Add Guest</button>
+          </div>
+          <div className={rowClassName}>
+            <button type="submit" className={submitButtonClassName}>
+              Submit
+              <i className={sendIconClassName}>send</i>
+            </button>
+          </div>
         </form>
       </div>
     </div>

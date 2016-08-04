@@ -1,29 +1,45 @@
 import React from 'react';
 import {IndexLink, Link} from 'react-router';
 
-const Navbar = () => {
-  return(
-    <nav className="navbar navbar-default">
-      <div className="container-fluid">
-        <div className="navbar-header">
-          <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-            <span className="sr-only">Toggle navigation</span>
-            <span className="icon-bar"></span>
-            <span className="icon-bar"></span>
-            <span className="icon-bar"></span>
-          </button>
-          <IndexLink to="/" className="navbar-brand">Alex and Molly 2017</IndexLink>
-        </div>
-        <div className="collapse navbar-collapse" id="navbar-collapse">
-          <ul className="nav navbar-nav navbar-left">
-            <li><Link to="/rsvp">RSVP</Link></li>
-            <li><Link to="/registry">Registry</Link></li>
-            <li><Link to="/about">About Us</Link></li>
+class Navbar extends React.Component {
+  constructor() {
+    super();
+  }
+
+  render() {
+    return (
+      <nav>
+        <div className="nav-wrapper">
+          <IndexLink to="/" className="brand-logo">Alex and Molly 2017</IndexLink>
+          <a href="#" data-activates="left-mobile-nav" className="button-collapse">
+            <i className="material-icons">menu</i>
+          </a>
+          <ul className="right hide-on-med-and-down">
+            <li>
+              <Link to="/rsvp">RSVP</Link>
+            </li>
+            <li>
+              <Link to="/registry">Registry</Link>
+            </li>
+            <li>
+              <Link to="/about">About Us</Link>
+            </li>
+          </ul>
+          <ul className="side-nav" id="left-mobile-nav">
+            <li>
+              <Link to="/rsvp">RSVP</Link>
+            </li>
+            <li>
+              <Link to="/registry">Registry</Link>
+            </li>
+            <li>
+              <Link to="/about">About Us</Link>
+            </li>
           </ul>
         </div>
-      </div>
-    </nav>
-  );
-};
+      </nav>
+    );
+  }
+}
 
 export default Navbar;
