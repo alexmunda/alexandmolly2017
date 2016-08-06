@@ -7,7 +7,9 @@ const RSVP_TEMPLATE = {
   firstName: '',
   lastName: '',
   guests: [],
-  foodChoice: ''
+  // foodChoice: '',
+  hasErrors: 'false',
+  errors: {}
 };
 
 class RsvpPage extends React.Component {
@@ -26,7 +28,11 @@ class RsvpPage extends React.Component {
   }
 
   submitRsvp() {
-    console.log('Submit: ', this.state.rsvp);
+    const validatedRsvp = this.validateRsvp(this.state.rsvp);
+    console.log('Submit: ', validatedRsvp);
+    if (validatedRsvp.hasErrors === 'true'){
+      return this.setState({rsvp: validatedRsvp});
+    }
     // fetch('/api/rsvp', {
     //   method: 'POST',
     //   headers: {
@@ -43,6 +49,42 @@ class RsvpPage extends React.Component {
     // .catch((error) => {
     //   console.log(error);
     // });
+  }
+
+  validateRsvp(rsvp) {
+    const errors = this.getErrorsForGuest(rsvp);
+
+    const validatedGuests = rsvp.guests.map(guest => {
+      const errors = this.getErrorsForGuest(guest);
+      return {
+        ...guest,
+        errors: errors
+      };
+    });
+
+    const hasErrors = Object.keys(errors).length > 0 ||
+      validatedGuests.filter(guest => Object.keys(guest.errors) > 0).length > 0 ?
+        'true' :
+        'false';
+
+    return {
+      ...rsvp,
+      hasErrors,
+      errors,
+      guests: validatedGuests
+    };
+  }
+
+  getErrorsForGuest(guest) {
+    return Object.keys(guest).map(key => {
+      if (!guest[key]) {
+        return {[key]: 'Required'};
+      }
+      return {};
+    }).reduce((previousError, error) => ({
+      ...previousError,
+      ...error
+    }), {});
   }
 
   render() {
