@@ -17,3 +17,8 @@ nav {
 .btn {
   background-color: #212121;
 }
+
+.remove-btn{
+  position: relative;
+  margin-top: 1rem;
+}

@@ -18,7 +18,7 @@ import {
   NOT_ATTENDING_LABEL
 } from '../constants/formConstants';
 
-const RsvpForm = ({rsvp, onChange, onSubmit}) => {
+const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
   const onInputChange = (key, e) => {
     onChange({
       ...rsvp,
@@ -67,23 +67,28 @@ const RsvpForm = ({rsvp, onChange, onSubmit}) => {
     onSubmit();
   };
 
+  const onBlur = () => {
+    return () => validateRsvp(rsvp);
+  };
+
   const rowClassName = classNames('row');
   const outerDivClassName = classNames('col', 's12');
+  const nameInputCLassName = classNames('input-field', 'col', 's5');
   const guestsDivClassName = classNames({
     'row': true,
     'hidden': rsvp.guests.length < 1
   });
-  const addGuestButtonClassName = classNames('btn', 'btn-default');
+  const addGuestButtonClassName = classNames('waves-effect', 'waves-dark', 'btn-flat');
   const sendIconClassName = classNames('material-icons', 'right');
-  const submitButtonClassName = classNames('btn', 'waves-effect', 'waves-light');
+  const submitButtonClassName = classNames('waves-effect', 'waves-dark', 'btn-flat');
 
   return (
     <div className={rowClassName}>
       <div className={outerDivClassName}>
         <form onSubmit={onRsvpSubmit} noValidate="true">
           <div className={rowClassName}>
-            <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.firstName} id={FIRST_NAME_ID} onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
-            <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.lastName} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
+            <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.firstName} hasErrors={rsvp.errors.firstName !== undefined} id={FIRST_NAME_ID} onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)} styles={nameInputCLassName} onBlur={onBlur()}/>
+            <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.lastName} hasErrors={rsvp.errors.lastName !== undefined} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)} styles={nameInputCLassName}/>
           </div>
           <div className={rowClassName}>
             <label>Please let us know if you will be attending.</label>
@@ -97,7 +102,9 @@ const RsvpForm = ({rsvp, onChange, onSubmit}) => {
             })}
           </div>
           <div className={rowClassName}>
-            <button className={addGuestButtonClassName} onClick={onAddGuestClick}>Add Guest</button>
+            <button className={addGuestButtonClassName} onClick={onAddGuestClick}>
+              Add Guest
+            </button>
           </div>
           <div className={rowClassName}>
             <button type="submit" className={submitButtonClassName}>
@@ -114,7 +121,8 @@ const RsvpForm = ({rsvp, onChange, onSubmit}) => {
 RsvpForm.propTypes = {
   rsvp: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  validateRsvp: PropTypes.func.isRequired
 };
 
 export default RsvpForm;

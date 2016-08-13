@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import classNames from 'classnames';
 import RsvpTextInput from './RsvpTextInput';
 import {
   FIRST_NAME_ID,
@@ -17,11 +18,21 @@ const RsvpGuestInput = ({onGuestInputChange, onGuestDeleteClick, guestId, guest}
     });
   };
 
+  const nameInputCLassName = classNames('input-field', 'col', 's5');
+  const buttonContainerClassName = classNames('col', 's2');
+  const removeButtonClassName = classNames('btn-floating', 'btn-small', 'waves-effect', 'waves-light', 'red', 'align-left', 'remove-btn');
+  const removeIconClassName = classNames('material-icons');
+
   return (
     <div>
-      <RsvpTextInput label={FIRST_NAME_LABEL} value={guest.firstName} id={FIRST_NAME_ID} onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)}/>
-      <RsvpTextInput label={LAST_NAME_LABEL} value={guest.lastName} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)}/>
-      <button className="btn btn-danger" onClick={onGuestDeleteClick.bind(undefined, guestId)}>Remove Guest</button>
+      <RsvpTextInput label={FIRST_NAME_LABEL} value={guest.firstName} hasErrors={guest.errors.firstName != undefined} id={FIRST_NAME_ID} onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)} styles={nameInputCLassName}/>
+      <RsvpTextInput label={LAST_NAME_LABEL} value={guest.lastName} hasErrors={guest.errors.lastName != undefined} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)} styles={nameInputCLassName}/>
+      <div className={buttonContainerClassName}>
+        <button className={removeButtonClassName} onClick={onGuestDeleteClick.bind(undefined, guestId)}>
+          <i className={removeIconClassName}>close</i>
+          Add Guest
+        </button>
+      </div>
     </div>
   );
 };

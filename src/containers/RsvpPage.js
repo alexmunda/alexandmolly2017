@@ -21,6 +21,7 @@ class RsvpPage extends React.Component {
 
     this.updateRsvp = this.updateRsvp.bind(this);
     this.submitRsvp = this.submitRsvp.bind(this);
+    this.validateRsvp = this.validateRsvp.bind(this);
   }
 
   updateRsvp(rsvp) {
@@ -52,10 +53,21 @@ class RsvpPage extends React.Component {
   }
 
   validateRsvp(rsvp) {
-    const errors = this.getErrorsForGuest(rsvp);
+    const getErrorsForGuest = (guest) => {
+      return Object.keys(guest).map(key => {
+        if (!guest[key]) {
+          return {[key]: 'Required'};
+        }
+        return {};
+      }).reduce((previousError, error) => ({
+        ...previousError,
+        ...error
+      }), {});
+    };
+    const errors = getErrorsForGuest(rsvp);
 
     const validatedGuests = rsvp.guests.map(guest => {
-      const errors = this.getErrorsForGuest(guest);
+      const errors = getErrorsForGuest(guest);
       return {
         ...guest,
         errors: errors
@@ -67,24 +79,12 @@ class RsvpPage extends React.Component {
         'true' :
         'false';
 
-    return {
+    this.updateRsvp({
       ...rsvp,
       hasErrors,
       errors,
       guests: validatedGuests
-    };
-  }
-
-  getErrorsForGuest(guest) {
-    return Object.keys(guest).map(key => {
-      if (!guest[key]) {
-        return {[key]: 'Required'};
-      }
-      return {};
-    }).reduce((previousError, error) => ({
-      ...previousError,
-      ...error
-    }), {});
+    });
   }
 
   render() {
@@ -92,7 +92,7 @@ class RsvpPage extends React.Component {
 
     return (
       <div className={containerClassname}>
-        <RsvpForm onChange={this.updateRsvp} onSubmit={this.submitRsvp} rsvp={this.state.rsvp}/>
+        <RsvpForm onChange={this.updateRsvp} onSubmit={this.submitRsvp} rsvp={this.state.rsvp} validateRsvp={this.validateRsvp}/>
       </div>
     );
   }
