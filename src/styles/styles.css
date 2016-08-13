@@ -14,6 +14,14 @@ nav {
   border: 2px solid #212121;
 }
 
+input[type=text]:focus:not([readonly]){
+  border-bottom: 1px solid #212121;
+  box-shadow: 0 1px 0 0 #212121;
+}
+input[type=text]:focus:not([readonly]) + label {
+  color: #212121;
+}
+
 .btn {
   background-color: #212121;
 }
