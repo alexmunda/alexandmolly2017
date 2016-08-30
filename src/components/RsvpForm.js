@@ -1,8 +1,8 @@
 import React, {PropTypes} from 'react';
+import _ from 'lodash';
 import classNames from 'classnames';
 import RsvpTextInput from './RsvpTextInput';
 import RsvpRadioInput from './RsvpRadioInput';
-import RsvpGuestInput from './RsvpGuestInput';
 import {
   ATTENDING_ID,
   ATTENDING_KEY,
@@ -19,15 +19,31 @@ import {
 } from '../constants/formConstants';
 
 const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
-  const onInputChange = (key, e) => {
-    onChange({
-      ...rsvp,
+  const onInputChange = (guestId, key, e) => {
+    const guest = rsvp.guests[guestId];
+
+    const newGuest = {
+      ...guest,
       [key]: e.target.value
-    });
+    };
+
+    const newGuests = [
+        ...rsvp.guests.slice(0, guestId),
+        newGuest,
+        ...rsvp.guests.slice(guestId + 1)
+      ];
+
+      onChange({
+        ...rsvp,
+        guests: newGuests
+      });
   };
+
+  const onNameChange = _.curry(onInputChange);
 
   const onAddGuestClick = (e) => {
     e.preventDefault();
+    if (disableAddGuestButton()) return;
     const newGuests = [
       ...rsvp.guests,
       GUEST_TEMPLATE
@@ -38,7 +54,7 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     });
   };
 
-  const onGuestDeleteClick = (id, e) => {
+  const onGuestDelete = (id, e) => {
     e.preventDefault();
     const newGuests = [
       ...rsvp.guests.slice(0, id),
@@ -50,45 +66,55 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     });
   };
 
-  const onGuestInputChange = (id, guest) => {
-    const newGuests = [
-      ...rsvp.guests.slice(0, id),
-      guest,
-      ...rsvp.guests.slice(id + 1)
-    ];
-    onChange({
-      ...rsvp,
-      guests: newGuests
-    });
-  };
+  const onGuestDeleteClick = _.curry(onGuestDelete);
 
   const onRsvpSubmit = (e) => {
     e.preventDefault();
     onSubmit();
   };
 
-  const onBlur = () => {
-    return () => validateRsvp(rsvp);
+  const onBlur = (key) => {
+    return () => {
+      const validatedRsvp = validateRsvp(rsvp);
+      console.log(validatedRsvp, key);
+     };
+  };
+
+  const disableAddGuestButton = () => {
+    if(rsvp.guests.length > 0){
+      const lastGuest = rsvp.guests[rsvp.guests.length - 1];
+      const isEmpty = lastGuest.firstName === "" || lastGuest.lastName === "";
+      return isEmpty || lastGuest.errors.firstName != undefined || lastGuest.errors.lastName != undefined;
+    }
+    return false;
   };
 
   const rowClassName = classNames('row');
   const outerDivClassName = classNames('col', 's12');
-  const nameInputCLassName = classNames('input-field', 'col', 's5');
+  const nameInputClassName = classNames('input-field', 'col', 's5');
   const guestsDivClassName = classNames({
     'row': true,
     'hidden': rsvp.guests.length < 1
   });
-  const addGuestButtonClassName = classNames('waves-effect', 'waves-dark', 'btn-flat');
+  const addGuestButtonClassName = classNames({
+    'waves-effect': true,
+    'waves-dark' : true,
+    'btn-flat': true,
+    'disabled': disableAddGuestButton()
+  });
   const sendIconClassName = classNames('material-icons', 'right');
   const submitButtonClassName = classNames('waves-effect', 'waves-dark', 'btn-flat');
+  const buttonContainerClassName = classNames('col', 's2');
+  const removeButtonClassName = classNames('btn-floating', 'btn-small', 'waves-effect', 'waves-light', 'red', 'align-left', 'remove-btn');
+  const removeIconClassName = classNames('material-icons');
 
   return (
     <div className={rowClassName}>
       <div className={outerDivClassName}>
         <form onSubmit={onRsvpSubmit} noValidate="true">
           <div className={rowClassName}>
-            <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.firstName} hasErrors={rsvp.errors.firstName !== undefined} id={FIRST_NAME_ID} onInputChange={onInputChange.bind(undefined, FIRST_NAME_KEY)} styles={nameInputCLassName} onBlur={onBlur()}/>
-            <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.lastName} hasErrors={rsvp.errors.lastName !== undefined} id={LAST_NAME_ID} onInputChange={onInputChange.bind(undefined, LAST_NAME_KEY)} styles={nameInputCLassName}/>
+            <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.guests[0].firstName} hasErrors={rsvp.guests[0].errors.firstName !== undefined} id={FIRST_NAME_ID} onInputChange={onNameChange(0, FIRST_NAME_KEY)} styles={nameInputClassName} onBlur={onBlur('firstName')}/>
+            <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.guests[0].lastName} hasErrors={rsvp.guests[0].errors.lastName !== undefined} id={LAST_NAME_ID} onInputChange={onNameChange(0, LAST_NAME_KEY)} styles={nameInputClassName}/>
           </div>
           <div className={rowClassName}>
             <label>Please let us know if you will be attending.</label>
@@ -97,8 +123,20 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
           </div>
           <div className={guestsDivClassName}>
             <label>Guests</label>
-            {rsvp.guests.map((guest, index) => {
-              return (<RsvpGuestInput onGuestInputChange={onGuestInputChange} onGuestDeleteClick={onGuestDeleteClick} guestId={index} guest={guest} key={index}/>);
+            {rsvp.guests.slice(1).map((guest, index) => {
+              const guestId = index + 1;
+              return (
+                <div key={index}>
+                  <RsvpTextInput label={FIRST_NAME_LABEL} value={guest.firstName} hasErrors={guest.errors.firstName != undefined} id={FIRST_NAME_ID} onInputChange={onNameChange(guestId, FIRST_NAME_KEY)} styles={nameInputClassName}/>
+                  <RsvpTextInput label={LAST_NAME_LABEL} value={guest.lastName} hasErrors={guest.errors.lastName != undefined} id={LAST_NAME_ID} onInputChange={onNameChange(guestId, LAST_NAME_KEY)} styles={nameInputClassName}/>
+                  <div className={buttonContainerClassName}>
+                    <button className={removeButtonClassName} onClick={onGuestDeleteClick(index)}>
+                      <i className={removeIconClassName}>close</i>
+                      Add Guest
+                    </button>
+                  </div>
+                </div>
+              );
             })}
           </div>
           <div className={rowClassName}>

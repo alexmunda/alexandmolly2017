@@ -1,34 +1,18 @@
+import classNames from 'classnames';
 import React from 'react';
 import RsvpForm from '../components/RsvpForm';
-import classNames from 'classnames';
-
-const RSVP_TEMPLATE = {
-  attending: 'true',
-  firstName: '',
-  lastName: '',
-  guests: [],
-  // foodChoice: '',
-  hasErrors: 'false',
-  errors: {}
-};
+import {RSVP_TEMPLATE} from '../constants/formConstants';
 
 class RsvpPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      rsvp: RSVP_TEMPLATE
-    };
+  state = {
+    rsvp: RSVP_TEMPLATE
+  };
 
-    this.updateRsvp = this.updateRsvp.bind(this);
-    this.submitRsvp = this.submitRsvp.bind(this);
-    this.validateRsvp = this.validateRsvp.bind(this);
-  }
-
-  updateRsvp(rsvp) {
+  updateRsvp = (rsvp) => {
     this.setState({rsvp: rsvp});
   }
 
-  submitRsvp() {
+  submitRsvp = () => {
     const validatedRsvp = this.validateRsvp(this.state.rsvp);
     console.log('Submit: ', validatedRsvp);
     if (validatedRsvp.hasErrors === 'true'){
@@ -52,7 +36,7 @@ class RsvpPage extends React.Component {
     // });
   }
 
-  validateRsvp(rsvp) {
+  validateRsvp = (rsvp) => {
     const getErrorsForGuest = (guest) => {
       return Object.keys(guest).map(key => {
         if (!guest[key]) {
@@ -64,7 +48,6 @@ class RsvpPage extends React.Component {
         ...error
       }), {});
     };
-    const errors = getErrorsForGuest(rsvp);
 
     const validatedGuests = rsvp.guests.map(guest => {
       const errors = getErrorsForGuest(guest);
@@ -74,17 +57,15 @@ class RsvpPage extends React.Component {
       };
     });
 
-    const hasErrors = Object.keys(errors).length > 0 ||
-      validatedGuests.filter(guest => Object.keys(guest.errors) > 0).length > 0 ?
+    const hasErrors = validatedGuests.filter(guest => Object.keys(guest.errors) > 0).length > 0 ?
         'true' :
         'false';
 
-    this.updateRsvp({
+    return {
       ...rsvp,
       hasErrors,
-      errors,
       guests: validatedGuests
-    });
+    };
   }
 
   render() {
