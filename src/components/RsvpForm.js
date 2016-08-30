@@ -28,22 +28,23 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     };
 
     const newGuests = [
-        ...rsvp.guests.slice(0, guestId),
-        newGuest,
-        ...rsvp.guests.slice(guestId + 1)
-      ];
+      ...rsvp.guests.slice(0, guestId),
+      newGuest,
+      ...rsvp.guests.slice(guestId + 1)
+    ];
 
-      onChange({
-        ...rsvp,
-        guests: newGuests
-      });
+    onChange({
+      ...rsvp,
+      guests: newGuests
+    });
   };
 
   const onNameChange = _.curry(onInputChange);
 
   const onAddGuestClick = (e) => {
     e.preventDefault();
-    if (disableAddGuestButton()) return;
+    if (disableAddGuestButton())
+      return;
     const newGuests = [
       ...rsvp.guests,
       GUEST_TEMPLATE
@@ -77,11 +78,11 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     return () => {
       const validatedRsvp = validateRsvp(rsvp);
       console.log(validatedRsvp, key);
-     };
+    };
   };
 
   const disableAddGuestButton = () => {
-    if(rsvp.guests.length > 0){
+    if (rsvp.guests.length > 0) {
       const lastGuest = rsvp.guests[rsvp.guests.length - 1];
       const isEmpty = lastGuest.firstName === "" || lastGuest.lastName === "";
       return isEmpty || lastGuest.errors.firstName != undefined || lastGuest.errors.lastName != undefined;
@@ -96,12 +97,7 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     'row': true,
     'hidden': rsvp.guests.length < 1
   });
-  const addGuestButtonClassName = classNames({
-    'waves-effect': true,
-    'waves-dark' : true,
-    'btn-flat': true,
-    'disabled': disableAddGuestButton()
-  });
+  const addGuestButtonClassName = classNames({'waves-effect': true, 'waves-dark': true, 'btn-flat': true, 'disabled': disableAddGuestButton()});
   const sendIconClassName = classNames('material-icons', 'right');
   const submitButtonClassName = classNames('waves-effect', 'waves-dark', 'btn-flat');
   const buttonContainerClassName = classNames('col', 's2');
@@ -130,7 +126,7 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
                   <RsvpTextInput label={FIRST_NAME_LABEL} value={guest.firstName} hasErrors={guest.errors.firstName != undefined} id={FIRST_NAME_ID} onInputChange={onNameChange(guestId, FIRST_NAME_KEY)} styles={nameInputClassName}/>
                   <RsvpTextInput label={LAST_NAME_LABEL} value={guest.lastName} hasErrors={guest.errors.lastName != undefined} id={LAST_NAME_ID} onInputChange={onNameChange(guestId, LAST_NAME_KEY)} styles={nameInputClassName}/>
                   <div className={buttonContainerClassName}>
-                    <button className={removeButtonClassName} onClick={onGuestDeleteClick(index)}>
+                    <button className={removeButtonClassName} onClick={onGuestDeleteClick(guestId)}>
                       <i className={removeIconClassName}>close</i>
                       Add Guest
                     </button>
