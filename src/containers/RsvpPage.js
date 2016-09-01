@@ -15,7 +15,7 @@ class RsvpPage extends React.Component {
   submitRsvp = () => {
     const validatedRsvp = this.validateRsvp(this.state.rsvp);
     console.log('Submit: ', validatedRsvp);
-    if (validatedRsvp.hasErrors === 'true'){
+    if (validatedRsvp.hasErrors === 'true') {
       return this.setState({rsvp: validatedRsvp});
     }
     // fetch('/api/rsvp', {
@@ -57,10 +57,10 @@ class RsvpPage extends React.Component {
       };
     });
 
-    const hasErrors = validatedGuests.filter(guest => Object.keys(guest.errors) > 0).length > 0 ?
-        'true' :
-        'false';
-
+    const hasErrors = validatedGuests.filter(guest => Object.keys(guest.errors).length > 0).length > 0
+      ? 'true'
+      : 'false';
+      
     return {
       ...rsvp,
       hasErrors,

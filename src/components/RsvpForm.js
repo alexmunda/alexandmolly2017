@@ -41,6 +41,15 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
 
   const onNameChange = _.curry(onInputChange);
 
+  const onRadioClick = (key, e) => {
+    onChange({
+      ...rsvp,
+      [key]: e.target.value
+    });
+  };
+
+  const onAttendingChange = _.curry(onRadioClick);
+
   const onAddGuestClick = (e) => {
     e.preventDefault();
     if (disableAddGuestButton())
@@ -74,11 +83,12 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     onSubmit();
   };
 
-  const onBlur = (key) => {
-    return () => {
-      const validatedRsvp = validateRsvp(rsvp);
-      console.log(validatedRsvp, key);
-    };
+  const onBlur = () => {
+    const validatedRsvp = validateRsvp(rsvp);
+    console.log('Onblur', validatedRsvp)
+    onChange({
+      ...validatedRsvp
+    });
   };
 
   const disableAddGuestButton = () => {
@@ -89,6 +99,8 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
     }
     return false;
   };
+
+  const firstGuest = _.head(rsvp.guests);
 
   const rowClassName = classNames('row');
   const outerDivClassName = classNames('col', 's12');
@@ -109,13 +121,13 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
       <div className={outerDivClassName}>
         <form onSubmit={onRsvpSubmit} noValidate="true">
           <div className={rowClassName}>
-            <RsvpTextInput label={FIRST_NAME_LABEL} value={rsvp.guests[0].firstName} hasErrors={rsvp.guests[0].errors.firstName !== undefined} id={FIRST_NAME_ID} onInputChange={onNameChange(0, FIRST_NAME_KEY)} styles={nameInputClassName} onBlur={onBlur('firstName')}/>
-            <RsvpTextInput label={LAST_NAME_LABEL} value={rsvp.guests[0].lastName} hasErrors={rsvp.guests[0].errors.lastName !== undefined} id={LAST_NAME_ID} onInputChange={onNameChange(0, LAST_NAME_KEY)} styles={nameInputClassName}/>
+            <RsvpTextInput label={FIRST_NAME_LABEL} value={firstGuest.firstName} hasErrors={!_.isUndefined(firstGuest.errors.firstName)} id={FIRST_NAME_ID} onInputChange={onNameChange(0, FIRST_NAME_KEY)} styles={nameInputClassName} onBlur={onBlur}/>
+            <RsvpTextInput label={LAST_NAME_LABEL} value={firstGuest.lastName} hasErrors={!_.isUndefined(firstGuest.errors.lastName)} id={LAST_NAME_ID} onInputChange={onNameChange(0, LAST_NAME_KEY)} styles={nameInputClassName} onBlur={onBlur}/>
           </div>
           <div className={rowClassName}>
             <label>Please let us know if you will be attending.</label>
-            <RsvpRadioInput label={ATTENDING_LABEL} value={'true'} id={ATTENDING_ID} shouldBeChecked={rsvp.attending === 'true'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
-            <RsvpRadioInput label={NOT_ATTENDING_LABEL} value={'false'} id={NOT_ATTENDING_ID} shouldBeChecked={rsvp.attending === 'false'} onInputChange={onInputChange.bind(undefined, ATTENDING_KEY)}/>
+            <RsvpRadioInput label={ATTENDING_LABEL} value={'true'} id={ATTENDING_ID} shouldBeChecked={rsvp.attending === 'true'} onInputChange={onAttendingChange(ATTENDING_KEY)}/>
+            <RsvpRadioInput label={NOT_ATTENDING_LABEL} value={'false'} id={NOT_ATTENDING_ID} shouldBeChecked={rsvp.attending === 'false'} onInputChange={onAttendingChange(ATTENDING_KEY)}/>
           </div>
           <div className={guestsDivClassName}>
             <label>Guests</label>
@@ -123,8 +135,8 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
               const guestId = index + 1;
               return (
                 <div key={index}>
-                  <RsvpTextInput label={FIRST_NAME_LABEL} value={guest.firstName} hasErrors={guest.errors.firstName != undefined} id={FIRST_NAME_ID} onInputChange={onNameChange(guestId, FIRST_NAME_KEY)} styles={nameInputClassName}/>
-                  <RsvpTextInput label={LAST_NAME_LABEL} value={guest.lastName} hasErrors={guest.errors.lastName != undefined} id={LAST_NAME_ID} onInputChange={onNameChange(guestId, LAST_NAME_KEY)} styles={nameInputClassName}/>
+                  <RsvpTextInput label={FIRST_NAME_LABEL} value={guest.firstName} hasErrors={!_.isUndefined(guest.errors.firstName)} id={FIRST_NAME_ID} onInputChange={onNameChange(guestId, FIRST_NAME_KEY)} styles={nameInputClassName} onBlur={onBlur}/>
+                  <RsvpTextInput label={LAST_NAME_LABEL} value={guest.lastName} hasErrors={!_.isUndefined(guest.errors.lastName)} id={LAST_NAME_ID} onInputChange={onNameChange(guestId, LAST_NAME_KEY)} styles={nameInputClassName} onBlur={onBlur}/>
                   <div className={buttonContainerClassName}>
                     <button className={removeButtonClassName} onClick={onGuestDeleteClick(guestId)}>
                       <i className={removeIconClassName}>close</i>
