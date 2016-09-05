@@ -3,9 +3,8 @@ import {
 } from 'path';
 import webpack from 'webpack';
 import webpackValidator from 'webpack-validator';
-//import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-module.exports = () => {
+module.exports = (env) => {
   return webpackValidator({
     debug: true,
     entry: [
@@ -18,12 +17,7 @@ module.exports = () => {
       pathinfo: true,
     },
     context: resolve(__dirname, 'src'),
-    devtool: 'eval',
-    devServer: {
-      historyApiFallback: true,
-      contentBase: './',
-      hot: true
-    },
+    devtool: env.dev ? 'eval' : 'source-map',
     module: {
       loaders: [{
         test: /\.js$/,
@@ -45,17 +39,14 @@ module.exports = () => {
         'window.jQuery': 'jquery'
       }),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('development'),
-        __DEV__: true
+        'process.env.NODE_ENV': env.dev ? JSON.stringify('development') : JSON.stringify('production'),
+        __DEV__: env.dev ? true : false
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false
+        }
       })
-      //   // new HtmlWebpackPlugin({     // Create HTML file that includes references to bundled CSS and JS.
-      //     template: '../index.html',
-      //     minify: {
-      //       removeComments: true,
-      //       collapseWhitespace: true
-      //     },
-      //     inject: true
-      // })
     ]
   });
 };
