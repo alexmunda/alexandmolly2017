@@ -16,24 +16,30 @@ class Navbar extends React.Component {
           </a>
           <ul className="right hide-on-med-and-down">
             <li>
+              <Link to="/about">About The Bridal Party</Link>
+            </li>
+            <li>
               <Link to="/rsvp">RSVP</Link>
             </li>
             <li>
-              <Link to="/registry">Registry</Link>
+              <Link to="/accommodations">Accommodations</Link>
             </li>
             <li>
-              <Link to="/about">About Us</Link>
+              <Link to="/registry">Registry</Link>
             </li>
           </ul>
           <ul className="side-nav" id="left-mobile-nav">
             <li>
+              <Link to="/about">About The Bridal Party</Link>
+            </li>
+            <li>
               <Link to="/rsvp">RSVP</Link>
             </li>
             <li>
-              <Link to="/registry">Registry</Link>
+              <Link to="/accommodations">Accommodations</Link>
             </li>
             <li>
-              <Link to="/about">About Us</Link>
+              <Link to="/registry">Registry</Link>
             </li>
           </ul>
         </div>

@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run clean && npm run build && node index.js",
-    "start:dev": "npm run clean && npm run build:dev && babel-node index.js",
+    "start:dev": "npm run clean && npm run build:dev & babel-node index.js",
     "build": "webpack --config webpack.dev.config.babel.js --env.prod",
-    "build:dev": "webpack --config webpack.dev.config.babel.js --env.dev",
+    "build:dev": "webpack --config webpack.dev.config.babel.js --env.dev --watch",
     "clean": "del-cli dist",
     "test": "test",
     "lint": "eslint src/**"
