@@ -4,8 +4,8 @@
   "description": "Alex and Molly wedding website",
   "main": "index.js",
   "scripts": {
-    "start": "npm run clean && npm run build && node index.js",
-    "start:dev": "npm run clean && npm run build:dev & babel-node index.js",
+    "start": "npm run clean && npm run build && NODE_PATH=. node index.js",
+    "start:dev": "npm run clean && npm run build:dev & nodemon src/server.js --exec babel-node ",
     "build": "webpack --config webpack.dev.config.babel.js --env.prod",
     "build:dev": "webpack --config webpack.dev.config.babel.js --env.dev --watch",
     "clean": "del-cli dist",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/alexmunda/alexandmolly2017#readme",
   "dependencies": {
+    "app-root-path": "^2.0.0",
     "babel-cli": "^6.14.0",
     "classnames": "^2.2.5",
     "ejs": "^2.5.1",
@@ -56,6 +57,7 @@
     "html-webpack-plugin": "2.22.0",
     "imports-loader": "^0.6.5",
     "lodash": "^4.15.0",
+    "nodemon": "^1.10.2",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "2.1.0-beta.21",

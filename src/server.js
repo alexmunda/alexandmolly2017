@@ -2,13 +2,14 @@ import express from 'express';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {match, RouterContext} from 'react-router';
-import routes from './src/routes';
+import routes from './routes';
+import rootPath from 'app-root-path';
 
 const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use('/dist', express.static(`${__dirname}/dist`));
+app.use('/dist', express.static(`${rootPath.path}/dist`));
 
 app.get('*', (req, res) => {
       match({
@@ -18,9 +19,11 @@ app.get('*', (req, res) => {
           if (error) {
             res.status(500).send(error.message);
           }
+
           else if (redirectLocation) {
             res.redirect(302, redirectLocation.pathname + redirectLocation.search);
           }
+
           else if (renderProps) {
             const html = renderToString(<RouterContext {...renderProps}/>);
               res.render('index', {
@@ -33,8 +36,6 @@ app.get('*', (req, res) => {
       });
   });
 
-    const server = app.listen(8080, function() {
-      const host = server.address().address;
-      const port = server.address().port;
-      console.log(`Example app listening at http://${host}:${port}`);
+  app.listen(8080, function() {
+      console.log('Listening at http://localhost:8080');
     });
