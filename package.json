@@ -4,11 +4,11 @@
   "description": "Alex and Molly wedding website",
   "main": "index.js",
   "scripts": {
-    "start": "npm run clean && npm run build && NODE_PATH=. node index.js",
+    "start": "npm run clean && npm run build && node dist_server/server.js",
     "start:dev": "npm run clean && npm run build:dev & nodemon src/server.js --exec babel-node ",
-    "build": "webpack --config webpack.dev.config.babel.js --env.prod",
+    "build": "webpack --config webpack.dev.config.babel.js --env.prod && mkdir dist_server && babel src --out-dir dist_server",
     "build:dev": "webpack --config webpack.dev.config.babel.js --env.dev --watch",
-    "clean": "del-cli dist",
+    "clean": "del-cli dist dist_server",
     "test": "test",
     "lint": "eslint src/**"
   },
