@@ -85,7 +85,6 @@ const RsvpForm = ({rsvp, onChange, onSubmit, validateRsvp}) => {
 
   const onBlur = () => {
     const validatedRsvp = validateRsvp(rsvp);
-    console.log('Onblur', validatedRsvp)
     onChange({
       ...validatedRsvp
     });

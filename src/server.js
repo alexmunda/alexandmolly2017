@@ -1,4 +1,7 @@
+import bodyParser from 'body-parser';
+import {jwtSecret, validAccessCode} from './constants/authenticationConstants';
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {match, RouterContext} from 'react-router';
@@ -10,32 +13,85 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use('/dist', express.static(`${rootPath.path}/dist`));
+app.use(bodyParser.json());
+
+app.disable('x-powered-by');
 
 app.get('*', (req, res) => {
-      match({
-          routes,
-          location: req.url
-        }, (error, redirectLocation, renderProps) => {
-          if (error) {
-            res.status(500).send(error.message);
-          }
+  match({
+      routes,
+      location: req.url
+    }, (error, redirectLocation, renderProps) => {
+      if (error) {
+        res.status(500).send({message: error.message});
+      }
 
-          else if (redirectLocation) {
-            res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-          }
+      else if (redirectLocation) {
+        res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+      }
 
-          else if (renderProps) {
-            const html = renderToString(<RouterContext {...renderProps}/>);
-              res.render('index', {
-                html: html
-              });
-            }
-          else {
-            res.status(404).send('Not found');
-          }
-      });
+      else if (renderProps) {
+        const html = renderToString(<RouterContext {...renderProps}/>);
+          res.render('index', {
+            html: html
+          });
+        }
+      else {
+        res.status(404).send({message: 'Not found'});
+      }
+  });
+});
+
+app.post('/api/authenticate', (req, res) => {
+  const {userToken} = req.body;
+
+  if(!userToken) {
+    return res.status(401).send({message: 'Invalid token.'});
+  }
+
+  jwt.verify(userToken, jwtSecret, (err, decoded) => {
+    if (err){
+      console.log(`Error ${err}.`);
+      return res.status(401).send({message: 'Invalid token.'});
+    }
+
+    else if(decoded.accessCode === validAccessCode) {
+      console.log(`Decoded JWT: ${JSON.stringify(decoded)}`);
+      return res.status(200).send({message: 'Access granted.'});
+    }
+
+    else {
+      return res.status(401).send({message: 'Unable to validate token.'});
+    }
   });
 
-  app.listen(8080, function() {
-      console.log('Listening at http://localhost:8080');
-    });
+});
+
+app.post('/api/token', (req, res) => {
+  const {accessCode} = req.body;
+
+  if(accessCode !== validAccessCode) {
+    return res.status(401).send({message: 'Invalid access code.'});
+  }
+
+  else if(accessCode === validAccessCode){
+    const token = jwt.sign({accessCode: validAccessCode}, jwtSecret);
+    return res.status(201).send({token: token});
+  }
+});
+
+app.post('/api/rsvp', (req, res) => {
+  const {rsvp} = req.body;
+
+  if(rsvp.hasErrors === 'true' || !rsvp){
+    return res.status(400).send({message: 'RSVP has errors.'});
+  }
+
+  console.log(JSON.stringify(rsvp));
+
+  return res.status(201).send({message: 'RSVP successful.'});
+});
+
+app.listen(8080, function() {
+  console.log('Listening at http://localhost:8080');
+});

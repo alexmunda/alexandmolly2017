@@ -14,26 +14,27 @@ class RsvpPage extends React.Component {
 
   submitRsvp = () => {
     const validatedRsvp = this.validateRsvp(this.state.rsvp);
-    console.log('Submit: ', validatedRsvp);
+
     if (validatedRsvp.hasErrors === 'true') {
       return this.setState({rsvp: validatedRsvp});
     }
-    // fetch('/api/rsvp', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(this.state.rsvp)
-    // })
-    // .then((response) => {
-    //   if(response.status == 201){
-    //     this.setState({rsvp: RSVP_TEMPLATE});
-    //   }
-    // })
-    // .catch((error) => {
-    //   console.log(error);
-    // });
+
+    fetch('/api/rsvp', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({rsvp: validatedRsvp})
+    })
+    .then((response) => {
+      if(response.status == 201){
+        this.setState({rsvp: RSVP_TEMPLATE});
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   validateRsvp = (rsvp) => {
@@ -60,7 +61,7 @@ class RsvpPage extends React.Component {
     const hasErrors = validatedGuests.filter(guest => Object.keys(guest.errors).length > 0).length > 0
       ? 'true'
       : 'false';
-      
+
     return {
       ...rsvp,
       hasErrors,
