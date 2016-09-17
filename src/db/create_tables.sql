@@ -1,6 +1,6 @@
 CREATE TABLE groups (
   group_id serial PRIMARY KEY,
-  date_created timestamp NOT NULL
+  date_created timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE guests (

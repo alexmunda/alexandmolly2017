@@ -1,7 +1,9 @@
 import bodyParser from 'body-parser';
 import {jwtSecret, validAccessCode} from './constants/authenticationConstants';
+import dbConfig from './db/config';
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import {Pool} from 'pg';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {match, RouterContext} from 'react-router';
@@ -9,6 +11,8 @@ import routes from './routes';
 import rootPath from 'app-root-path';
 
 const app = express();
+
+const pool = new Pool(dbConfig);
 
 app.set('view engine', 'ejs');
 
@@ -82,10 +86,27 @@ app.post('/api/token', (req, res) => {
 
 app.post('/api/rsvp', (req, res) => {
   const {rsvp} = req.body;
+  const onError = () => res.status(400).send({message: 'Error saving RSVP.'});
+  const getValues = (guest, groupId, attending) => `VALUES ('${guest.firstName}', '${guest.lastName}', ${attending}, CURRENT_TIMESTAMP, ${groupId})`;
+  const insertGuestsWithGroup = (rsvp, groupId) => {
+    const attending = {rsvp};
+    const guestValues = rsvp.guests.map((guest) => getValues(guest, groupId, attending)).join(' ');
+    return pool.query(`INSERT INTO guests (first_name, last_name, attending, date_created, group_id) VALUES ${guestValues}`);
+  };
 
   if(rsvp.hasErrors === 'true' || !rsvp){
-    return res.status(400).send({message: 'RSVP has errors.'});
+    return onError();
   }
+
+  pool
+    .query('INSERT INTO groups DEFAULT VALUES')
+    .then(() => pool.query('SELECT group_id FROM GROUPS ORDER BY date_created DESC LIMIT 1'))
+    .then((result) => Promise.resolve(result.rows[0]))
+    .then((groupId) => insertGuestsWithGroup(rsvp, groupId))
+    .catch((err) => {
+      console.log(err);
+      return onError();
+    });
 
   console.log(JSON.stringify(rsvp));
 
