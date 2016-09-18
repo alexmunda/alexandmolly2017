@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import {jwtSecret, validAccessCode} from './constants/authenticationConstants';
 import dbConfig from './db/config';
-import {insertDefaultGroup, insertGuestsWithGroup, selectNewestGroupId} from './db/queries';
+import {createTables, insertDefaultGroup, insertGuestsWithGroup, selectNewestGroupId} from './db/queries';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import {Pool} from 'pg';
@@ -104,6 +104,6 @@ app.post('/api/rsvp', (req, res) => {
     });
 });
 
-app.listen(8080, function() {
-  console.log('Listening at http://localhost:8080');
-});
+createTables(pool)
+  .then(app.listen(8080,
+    () => console.log('Listening at http://localhost:8080')));
