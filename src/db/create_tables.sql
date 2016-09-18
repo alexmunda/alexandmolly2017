@@ -4,7 +4,7 @@ CREATE TABLE groups (
 );
 
 CREATE TABLE guests (
-  guest_id integer PRIMARY KEY,
+  guest_id serial PRIMARY KEY,
   first_name text NOT NULL,
   last_name text NOT NULL,
   attending boolean NOT NULL,

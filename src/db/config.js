@@ -1,7 +1,7 @@
 const config = {
-  host: process.env.NODE_ENV === 'development' ? 'localhost' : 'secret',
-  user: process.env.NODE_ENV === 'development' ? 'testuser' : 'secret',
-  password: process.env.NODE_ENV === 'development' ? 'test1234' : 'secret',
+  host: process.env.NODE_ENV === 'production' ? 'secret' : 'localhost',
+  user: process.env.NODE_ENV === 'production' ? 'secret' : 'testuser',
+  password: process.env.NODE_ENV === 'production' ? 'secret' : 'test1234',
   database: 'alexandmolly2017',
 };
 

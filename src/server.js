@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import {jwtSecret, validAccessCode} from './constants/authenticationConstants';
 import dbConfig from './db/config';
+import {insertDefaultGroup, insertGuestsWithGroup, selectNewestGroupId} from './db/queries';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import {Pool} from 'pg';
@@ -87,30 +88,20 @@ app.post('/api/token', (req, res) => {
 app.post('/api/rsvp', (req, res) => {
   const {rsvp} = req.body;
   const onError = () => res.status(400).send({message: 'Error saving RSVP.'});
-  const getValues = (guest, groupId, attending) => `VALUES ('${guest.firstName}', '${guest.lastName}', ${attending}, CURRENT_TIMESTAMP, ${groupId})`;
-  const insertGuestsWithGroup = (rsvp, groupId) => {
-    const attending = {rsvp};
-    const guestValues = rsvp.guests.map((guest) => getValues(guest, groupId, attending)).join(' ');
-    return pool.query(`INSERT INTO guests (first_name, last_name, attending, date_created, group_id) VALUES ${guestValues}`);
-  };
 
   if(rsvp.hasErrors === 'true' || !rsvp){
     return onError();
   }
 
-  pool
-    .query('INSERT INTO groups DEFAULT VALUES')
-    .then(() => pool.query('SELECT group_id FROM GROUPS ORDER BY date_created DESC LIMIT 1'))
-    .then((result) => Promise.resolve(result.rows[0]))
-    .then((groupId) => insertGuestsWithGroup(rsvp, groupId))
+  return insertDefaultGroup(pool)
+    .then(() => selectNewestGroupId(pool))
+    .then((result) => Promise.resolve(result.rows[0].group_id))
+    .then((groupId) => insertGuestsWithGroup(pool, rsvp, groupId))
+    .then(() => res.status(201).send({message: 'RSVP successful.'}))
     .catch((err) => {
       console.log(err);
       return onError();
     });
-
-  console.log(JSON.stringify(rsvp));
-
-  return res.status(201).send({message: 'RSVP successful.'});
 });
 
 app.listen(8080, function() {
