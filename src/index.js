@@ -1,13 +1,3 @@
-import React from 'react';
-import {render} from 'react-dom';
-import {Router, browserHistory} from 'react-router';
-import routes from './routes';
-import 'materialize-css';
-require('../node_modules/material-design-icons/iconfont/material-icons.css');
-require('../node_modules/materialize-css/bin/materialize.css');
-require('./styles/styles.css');
+import Elm from './Main';
 
-render(
-  <Router history={browserHistory} routes={routes} />,
-  document.getElementById("app")
-);
+Elm.Main.embed(document.getElementById('main'));

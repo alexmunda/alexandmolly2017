@@ -1,7 +1,6 @@
 import {
   resolve
 } from 'path';
-import webpack from 'webpack';
 import webpackValidator from 'webpack-validator';
 
 module.exports = (env) => {
@@ -24,6 +23,10 @@ module.exports = (env) => {
         loaders: ['babel'],
         exclude: /node_modules/
       }, {
+        test: /\.elm$/,
+        exclude: [/elm-stuff/, /node_modules/],
+        loaders: ['elm-webpack-loader']
+      }, {
         test: /\.css$/,
         loaders: ['style', 'css']
       }, {
@@ -31,22 +34,9 @@ module.exports = (env) => {
         loader: 'url-loader?limit=100000'
       }],
     },
-    plugins: [
-      new webpack.ProvidePlugin({
-        'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch',
-        $: 'jquery',
-        jQuery: 'jquery',
-        'window.jQuery': 'jquery'
-      }),
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': env.dev ? JSON.stringify('development') : JSON.stringify('production'),
-        __DEV__: env.dev ? true : false
-      }),
-      new webpack.optimize.UglifyJsPlugin({
-        compress: {
-          warnings: false
-        }
-      })
-    ]
+    resolve: {
+      modulesDirectories: ['node_modules'],
+      extensions: ['', '.js', '.elm']
+    }
   });
 };
