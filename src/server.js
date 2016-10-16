@@ -24,33 +24,16 @@ app.use((req, res, next) => {
 app.disable('x-powered-by')
 
 app.get('/', (req, res) => {
-  res.render('home', { title: 'Alex and Molly' })
+  res.render('home', { title: 'Home Page' })
 })
 
-// app.get('*', (req, res) => {
-//   match({
-//       routes,
-//       location: req.url
-//     }, (error, redirectLocation, renderProps) => {
-//       if (error) {
-//         res.status(500).send({message: error.message})
-//       }
-//
-//       else if (redirectLocation) {
-//         res.redirect(302, redirectLocation.pathname + redirectLocation.search)
-//       }
-//
-//       else if (renderProps) {
-//         const html = renderToString(<RouterContext {...renderProps}/>)
-//           res.render('index', {
-//             html: html
-//           })
-//         }
-//       else {
-//         res.status(404).send({message: 'Not found'})
-//       }
-//   })
-// })
+app.get('/rsvp', (req, res) => {
+  res.render('rsvp', { title: 'RSVP Page' })
+})
+
+app.get('/about', (req, res) => {
+  res.render('about', { title: 'About Page' })
+})
 
 app.post('/api/authenticate', (req, res) => {
   const {userToken} = req.body
