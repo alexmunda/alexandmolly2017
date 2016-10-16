@@ -1,19 +1,19 @@
-import {
-  resolve
-} from 'path';
-import webpackValidator from 'webpack-validator';
+import { resolve } from 'path'
+import webpackValidator from 'webpack-validator'
+import Webpack from 'webpack'
 
 module.exports = (env) => {
   return webpackValidator({
-    debug: true,
     entry: [
-      './index.js'
+      './main.js'
     ],
     output: {
-      filename: 'bundle.js',
+      filename: 'main.js',
       path: resolve(__dirname, 'dist'),
       publicPath: '/dist/',
       pathinfo: true,
+      library: ['alexandmolly', 'main'],
+      libraryTarget: 'var',
     },
     context: resolve(__dirname, 'src'),
     devtool: env.dev ? 'eval' : 'source-map',
@@ -35,8 +35,14 @@ module.exports = (env) => {
       }],
     },
     resolve: {
-      modulesDirectories: ['node_modules'],
-      extensions: ['', '.js', '.elm']
-    }
-  });
-};
+      extensions: ['.js', '.elm']
+    },
+    plugins: [
+      new Webpack.ProvidePlugin({
+         $: 'jquery',
+         jQuery: 'jquery',
+         'window.jQuery': 'jquery',
+      })
+    ]
+  })
+}
