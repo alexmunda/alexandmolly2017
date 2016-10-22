@@ -4,9 +4,9 @@ import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Debug exposing (..)
 
 
+main : Program Never
 main =
     App.beginnerProgram
         { model = model
@@ -33,23 +33,21 @@ model =
     Model [ Guest "" "" 1 ] True
 
 
-
---update
-
-
 type Msg
     = FirstName Int String
     | LastName Int String
     | ToggleAttending Bool
+    | AddGuest
+    | RemoveGuest Int
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        FirstName id firstName ->
+        FirstName guestId firstName ->
             let
                 updateFirstName guest =
-                    if guest.id == id then
+                    if guest.id == guestId then
                         { guest | firstName = firstName }
                     else
                         guest
@@ -69,27 +67,42 @@ update msg model =
         ToggleAttending attending ->
             { model | attending = attending }
 
+        AddGuest ->
+            let
+                guest =
+                    Guest "" "" <| List.length model.guests + 1
+            in
+                { model | guests = model.guests ++ [ guest ] }
 
-
---view
+        RemoveGuest guestId ->
+            let
+                removeGuest guest =
+                    guest.id /= guestId
+            in
+                { model | guests = List.filter removeGuest model.guests }
 
 
 view : Model -> Html Msg
 view model =
     div []
         [ fieldset []
-            [ radio "Attending" (ToggleAttending True)
-            , radio "Not Attending" (ToggleAttending False)
+            [ radio "Attending" <| ToggleAttending True
+            , radio "Not Attending" <| ToggleAttending False
             ]
         , div [] (guestList model)
+        , button [ class "btn btn-default", onClick AddGuest ] [ text "Add Guest" ]
+        , div []
+            [ button [ class "btn btn-primary" ] [ text "Submit RSVP" ]
+            ]
         ]
 
 
 guestNames : Guest -> Html Msg
 guestNames guest =
     div []
-        [ input [ type' "text", placeholder "First Name", onInput (FirstName guest.id) ] []
-        , input [ type' "text", placeholder "Last Name", onInput (LastName guest.id) ] []
+        [ input [ type' "text", placeholder "First Name", onInput <| FirstName guest.id ] []
+        , input [ type' "text", placeholder "Last Name", onInput <| LastName guest.id ] []
+        , removeGuestButton guest.id
         ]
 
 
@@ -101,8 +114,15 @@ guestList model =
 radio : String -> Msg -> Html Msg
 radio value msg =
     label
-        [ style [ ( "padding", "20px" ) ]
-        ]
+        []
         [ input [ type' "radio", name "font-size", onClick msg ] []
         , text value
         ]
+
+
+removeGuestButton : Int -> Html Msg
+removeGuestButton guestId =
+    if guestId == 1 then
+        span [] []
+    else
+        button [ class "btn btn-danger", onClick <| RemoveGuest guestId ] [ text "Remove Guest" ]
