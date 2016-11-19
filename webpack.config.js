@@ -1,6 +1,6 @@
-import { resolve } from 'path'
-import webpackValidator from 'webpack-validator'
-import Webpack from 'webpack'
+const resolve = require('path').resolve
+const webpackValidator = require('webpack-validator')
+const webpack = require('webpack')
 
 module.exports = (env) => {
   return webpackValidator({
@@ -15,14 +15,10 @@ module.exports = (env) => {
       library: ['alexandmolly', 'main'],
       libraryTarget: 'var',
     },
-    context: resolve(__dirname, 'src'),
+    context: resolve(__dirname, 'src/client'),
     devtool: env.dev ? 'eval' : 'source-map',
     module: {
       loaders: [{
-        test: /\.js$/,
-        loaders: ['babel'],
-        exclude: /node_modules/
-      }, {
         test: /\.elm$/,
         exclude: [/elm-stuff/, /node_modules/],
         loaders: ['elm-webpack-loader']
@@ -38,7 +34,7 @@ module.exports = (env) => {
       extensions: ['.js', '.elm']
     },
     plugins: [
-      new Webpack.ProvidePlugin({
+      new webpack.ProvidePlugin({
          $: 'jquery',
          jQuery: 'jquery',
          'window.jQuery': 'jquery',

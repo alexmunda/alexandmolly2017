@@ -2,3 +2,6 @@ node_modules
 dist
 dist_server
 elm-stuff
+
+src/server/**/*.js
+src/server/**/*.js.map

@@ -4,14 +4,15 @@
   "description": "Alex and Molly wedding website",
   "main": "index.js",
   "scripts": {
-    "start": "npm run clean && npm run build && NODE_ENV=production node dist_server/server.js",
-    "start:dev": "npm run clean && npm run build:dev & nodemon src/server.js --exec babel-node",
-    "build": "webpack --config webpack.dev.config.babel.js --env.prod && mkdir dist_server && babel src --out-dir dist_server",
-    "build:dev": "webpack --config webpack.dev.config.babel.js --env.dev --watch",
-    "clean": "del-cli dist dist_server",
+    "start": "npm run clean && npm run build && NODE_ENV=production node src/server/server.js",
+    "start:dev": "npm run clean && npm run build:dev && node src/server/server.js",
+    "start:watch": "nodemon -w ./src/server -e ts --exec \"npm run start:dev\"",
+    "build": "tsc && webpack --env.prod",
+    "build:dev": "tsc && webpack --env.dev",
+    "clean": "del-cli dist",
     "db:create": "createdb alexandmolly2017",
     "test": "test",
-    "lint": "eslint src/**"
+    "lint": "tslint src/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,6 @@
   "homepage": "https://github.com/alexmunda/alexandmolly2017#readme",
   "dependencies": {
     "app-root-path": "2.0.0",
-    "babel-cli": "6.14.0",
     "body-parser": "1.15.2",
     "classnames": "2.2.5",
     "express": "4.14.0",
@@ -34,12 +34,9 @@
     "pg": "6.1.0"
   },
   "devDependencies": {
-    "babel-core": "6.14.0",
-    "babel-eslint": "6.1.2",
-    "babel-loader": "6.2.5",
-    "babel-preset-es2015": "6.14.0",
-    "babel-preset-stage-2": "6.13.0",
-    "babel-register": "6.14.0",
+    "@types/es6-promise": "^0.0.32",
+    "@types/lodash": "4.14.39",
+    "@types/node": "^6.0.48",
     "css-loader": "0.24.0",
     "del-cli": "0.2.0",
     "elm-webpack-loader": "^3.0.6",
@@ -47,6 +44,10 @@
     "lodash": "4.15.0",
     "nodemon": "1.10.2",
     "style-loader": "0.13.1",
+    "tslint": "4.0.0",
+    "tslint-eslint-rules": "^2.2.1",
+    "tslint-microsoft-contrib": "^2.0.13",
+    "typescript": "^2.0.10",
     "url-loader": "0.5.7",
     "webpack": "2.1.0-beta.25",
     "webpack-validator": "2.2.7"
