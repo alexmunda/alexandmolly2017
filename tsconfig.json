@@ -17,7 +17,8 @@
       "node_modules/typescript",
       "node_modules/tslint",
       "node_modules/tslint-eslint-rules",
-      "node_modules/tslint-microsoft-contrib"
+      "node_modules/tslint-microsoft-contrib",
+      "node_modules/base64url"
     ],
     "atom": {
         "rewriteTsconfig": false

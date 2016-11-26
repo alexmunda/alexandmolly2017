@@ -2,15 +2,15 @@
 var authenticationConstants_1 = require('./constants/authenticationConstants');
 var config_1 = require('./db/config');
 var queries_1 = require('./db/queries');
+var static_1 = require('./static');
 var bodyParser = require('body-parser');
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var Pool = require('pg').Pool;
-var rootPath = require('app-root-path');
 var app = express();
 var pool = new Pool(config_1.default);
 app.set('view engine', 'jade');
-app.use('/dist', express.static(rootPath.path + "/dist"));
+static_1.StaticAssets.initialize(app);
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
     res.locals.DistPath = function (file) { return ("/dist/" + file); };
