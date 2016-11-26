@@ -6,12 +6,14 @@ import { StaticAssets } from './static'
 const bodyParser = require('body-parser')
 const express = require('express')
 const jwt = require('jsonwebtoken')
+const Path = require('path')
 const Pool = require('pg').Pool
 
 const app = express()
 
 const pool = new Pool(dbConfig)
 
+app.set('views', Path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 
 StaticAssets.initialize(app)
