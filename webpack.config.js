@@ -3,7 +3,8 @@ const DEVELOPMENT = process.env.NODE_ENV !== 'production'
 const PRODUCTION = !DEVELOPMENT
 
 const Path = require('path')
-const webpack = require('webpack')
+const Webpack = require('webpack')
+const _ = require('lodash')
 
 const OutputPath = Path.resolve(__dirname, 'src/client/dist')
 
@@ -11,8 +12,13 @@ function IfDevelopment(thing, other) {
    return DEVELOPMENT ? thing : other
 }
 
+function OnlyIn(test, thing) {
+   if (test) return thing
+}
+
 module.exports = {
   entry: [
+    OnlyIn(DEVELOPMENT, 'webpack-hot-middleware/client'),
     './main.js'
   ],
   output: {
@@ -29,8 +35,12 @@ module.exports = {
     loaders: [{
       test: /\.elm$/,
       exclude: [/elm-stuff/, /node_modules/],
-      loaders: ['elm-webpack-loader']
-    }, {
+      loaders: _.compact([
+        OnlyIn(DEVELOPMENT, 'elm-hot'),
+        'elm-webpack-loader'
+      ])
+    },
+    {
       test: /\.css$/,
       loaders: ['style', 'css']
     }, {
@@ -41,11 +51,12 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.elm']
   },
-  plugins: [
-    new webpack.ProvidePlugin({
+  plugins: _.compact([
+    OnlyIn(DEVELOPMENT, new Webpack.HotModuleReplacementPlugin()),
+    new Webpack.ProvidePlugin({
        $: 'jquery',
        jQuery: 'jquery',
        'window.jQuery': 'jquery',
     })
-  ]
+  ])
 }
