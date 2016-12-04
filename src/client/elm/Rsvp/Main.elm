@@ -1,14 +1,12 @@
 module Main exposing (..)
 
 import Html exposing (..)
-import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
-main : Program Never
 main =
-    App.beginnerProgram
+    Html.beginnerProgram
         { model = model
         , view = view
         , update = update
@@ -100,8 +98,8 @@ view model =
 guestNames : Guest -> Html Msg
 guestNames guest =
     div []
-        [ input [ type' "text", placeholder "First Name", onInput <| FirstName guest.id ] []
-        , input [ type' "text", placeholder "Last Name", onInput <| LastName guest.id ] []
+        [ input [ type_ "text", placeholder "First Name", onInput <| FirstName guest.id ] []
+        , input [ type_ "text", placeholder "Last Name", onInput <| LastName guest.id ] []
         , removeGuestButton guest.id
         ]
 
@@ -115,7 +113,7 @@ radio : String -> Msg -> Html Msg
 radio value msg =
     label
         []
-        [ input [ type' "radio", name "font-size", onClick msg ] []
+        [ input [ type_ "radio", name "font-size", onClick msg ] []
         , text value
         ]
 

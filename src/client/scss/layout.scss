@@ -1,0 +1,17 @@
+@import "./headings.scss";
+
+html, * {
+  box-sizing: border-box;
+  font-size: 100%;
+}
+
+html {
+  background-color: #f5f7fa;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: "ProximaNova", Helvetica, sans-serif;
+  font-weight: 400;
+}

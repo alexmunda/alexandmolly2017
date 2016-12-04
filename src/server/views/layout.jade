@@ -5,10 +5,8 @@ html(lang='en')
     meta(http-equiv='X-UA-Compatible', content='IE=Edge', charset='utf-8')
     block title
       title= title
-    //- link(rel='stylesheet', href='/assets/stylesheets/bootstrap-3.3.6.min.css')
-
-    // DO NOT REMOVE main.css - Used in prod with webpack
-    // link(rel='stylesheet', href=WebpackPath('main.css'))
+    link(rel='stylesheet', href='/assets/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href=DistPath('main.css'))
     block styles
 
     //- link(rel='icon', href='/assets/images/favicon48.png', sizes='32x32')
