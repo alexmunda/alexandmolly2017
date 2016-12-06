@@ -37,6 +37,8 @@
     "@types/es6-promise": "0.0.32",
     "@types/lodash": "4.14.39",
     "@types/node": "6.0.48",
+    "clean-webpack-plugin": "^0.1.14",
+    "copy-webpack-plugin": "^4.0.1",
     "css-loader": "0.24.0",
     "elm-hot-loader": "0.3.4",
     "elm-webpack-loader": "3.1.0",

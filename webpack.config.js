@@ -2,12 +2,12 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 const DEVELOPMENT = process.env.NODE_ENV !== 'production'
 const PRODUCTION = !DEVELOPMENT
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const Path = require('path')
 const Webpack = require('webpack')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const _ = require('lodash')
-
-const OutputPath = Path.resolve(__dirname, 'src/client/dist')
 
 function IfDevelopment(thing, other) {
    return DEVELOPMENT
@@ -20,6 +20,11 @@ function OnlyIn(test, thing) {
       return thing
 }
 
+const AssetsPath = Path.join(__dirname, '/src/client/assets')
+const OutputPath = Path.resolve(__dirname, 'src/client/dist')
+const ElmStuffPath = Path.join(__dirname, '/elm-stuff')
+const ServePath = '/assets/'
+
 module.exports = {
    entry: [
       OnlyIn(DEVELOPMENT, 'webpack-hot-middleware/client'),
@@ -28,7 +33,7 @@ module.exports = {
    output: {
       filename: 'main.js',
       path: OutputPath,
-      publicPath: '/dist/',
+      publicPath: ServePath,
       pathinfo: true,
       library: [
          'alexandmolly', 'main'
@@ -69,6 +74,11 @@ module.exports = {
    plugins: _.compact([
       OnlyIn(DEVELOPMENT, new Webpack.HotModuleReplacementPlugin()),
       new Webpack.ProvidePlugin({$: 'jquery', jQuery: 'jquery', 'window.jQuery': 'jquery'}),
-      new ExtractTextPlugin('main.css')
+      new ExtractTextPlugin('main.css'),
+      OnlyIn(PRODUCTION, new CleanWebpackPlugin([OutputPath, ElmStuffPath])),
+      new CopyWebpackPlugin([{
+         from: AssetsPath,
+         to: OutputPath,
+      }])
    ])
 }
