@@ -6,7 +6,7 @@ html(lang='en')
     block title
       title= title
     link(rel='stylesheet', href='/assets/stylesheets/bootstrap.min.css')
-    link(rel='stylesheet', href=DistPath('main.css'))
+    link(rel='stylesheet', href=WebpackPath('main.css'))
     block styles
 
     //- link(rel='icon', href='/assets/images/favicon48.png', sizes='32x32')
@@ -21,4 +21,4 @@ html(lang='en')
       script.
         window.alexandmolly = window.alexandmolly || {}
 
-      script(src=DistPath('main.js'))
+      script(src=WebpackPath('main.js'))

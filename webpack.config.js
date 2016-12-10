@@ -21,26 +21,26 @@ function OnlyIn(test, thing) {
 }
 
 const AssetsPath = Path.join(__dirname, '/src/client/assets')
-const OutputPath = Path.resolve(__dirname, 'src/client/dist')
+const OutputPath = Path.join(__dirname, '/src/client/dist')
 const ElmStuffPath = Path.join(__dirname, '/elm-stuff')
+const ScriptsPath = Path.join(__dirname, '/src/client/scripts')
 const ServePath = '/assets/'
 
 module.exports = {
    entry: [
       OnlyIn(DEVELOPMENT, 'webpack-hot-middleware/client'),
-      './main.js'
+      `${ScriptsPath}/main.js`
    ],
    output: {
-      filename: 'main.js',
+      filename: '[name].js',
       path: OutputPath,
       publicPath: ServePath,
       pathinfo: true,
       library: [
-         'alexandmolly', 'main'
+         'alexandmolly', '[name]'
       ],
       libraryTarget: 'var'
    },
-   context: Path.resolve(__dirname, 'src/client'),
    devtool: IfDevelopment('eval', 'source-map'),
    module: {
       loaders: [

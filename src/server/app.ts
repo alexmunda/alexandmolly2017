@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const Path = require('path')
+const Fs = require('fs')
 const Pool = require('pg').Pool
 
 const app = express()
@@ -19,11 +20,27 @@ app.set('view engine', 'jade')
 StaticAssets.initialize(app)
 
 app.use(bodyParser.json())
-app.use((req, res, next) => {
-  res.locals.DistPath = file => `/dist/${file}`
 
-  next()
-})
+// Setup config/index.ts eventually and read from there
+if (process.env.NODE_ENV === 'production') {
+   const webpack_manifest_path = Path.join(__dirname, '../client/dist/manifest.json')
+
+   const webpack_manifest = JSON.parse(Fs.readFileSync(webpack_manifest_path))
+
+   const getWebpackPath = (key) => {
+      return `/assets/${webpack_manifest[key] || key}`
+   }
+
+   app.use((req, res, next) => {
+      res.locals.WebpackPath = getWebpackPath
+      next()
+   })
+} else {
+   app.use((req, res, next) => {
+      res.locals.WebpackPath = x => `/assets/${x}`
+      next()
+   })
+}
 
 app.disable('x-powered-by')
 
