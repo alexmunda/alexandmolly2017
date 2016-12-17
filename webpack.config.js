@@ -1,6 +1,9 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 const DEVELOPMENT = process.env.NODE_ENV !== 'production'
 const PRODUCTION = !DEVELOPMENT
+const ELM_DEBUG = DEVELOPMENT && process.env.ELM_DEBUG === 'true'
+   ? 'true'
+   : 'false'
 
 const Path = require('path')
 const Webpack = require('webpack')
@@ -45,20 +48,17 @@ module.exports = {
    module: {
       loaders: [
          {
-            test: /\.elm$/,
-            exclude: [
-               /elm-stuff/, /node_modules/
-            ],
+            test: /\.elmproj$/,
             loaders: _.compact([
                OnlyIn(DEVELOPMENT, 'elm-hot'),
-               'elm-webpack-loader'
+               `elm-webpack-project?debug=${ELM_DEBUG}`
             ])
          }, {
             test: /\.css$/,
             loaders: ['style', 'css']
          }, {
             test: /(\.scss)$/,
-            loader: ExtractTextPlugin.extract(['css','sass'])
+            loader: ExtractTextPlugin.extract(['css', 'sass'])
          }, {
             test: /\.(png|woff|woff2|eot|ttf|svg)$/,
             loader: 'url-loader?limit=100000'
@@ -66,19 +66,23 @@ module.exports = {
             test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
             loader: 'file-loader'
          }
-      ]
+      ],
+
+      noParse: /\.elm/
    },
    resolve: {
-      extensions: ['.js', '.elm', '.scss']
+      extensions: ['.js', '.elm', '.elmproj', '.scss']
    },
    plugins: _.compact([
       OnlyIn(DEVELOPMENT, new Webpack.HotModuleReplacementPlugin()),
       new Webpack.ProvidePlugin({$: 'jquery', jQuery: 'jquery', 'window.jQuery': 'jquery'}),
       new ExtractTextPlugin('main.css'),
       OnlyIn(PRODUCTION, new CleanWebpackPlugin([OutputPath, ElmStuffPath])),
-      new CopyWebpackPlugin([{
-         from: AssetsPath,
-         to: OutputPath,
-      }])
+      new CopyWebpackPlugin([
+         {
+            from: AssetsPath,
+            to: OutputPath
+         }
+      ])
    ])
 }

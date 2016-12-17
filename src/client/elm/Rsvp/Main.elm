@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Rsvp.Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
