@@ -3,9 +3,8 @@ extends page
 block maincontent
   ul#home-background.home-background
     li#home-background-image
-  //- img(class='img-responsive', src='/assets/images/Molly_Alex_073.jpg')
-  //- .page-content#elm-container
+  .page-content#elm-container
 
-//- block append scripts
-//-   script.
-//-     window.alexandmolly.main.RsvpComponent(document.getElementById('elm-container'))
+block append scripts
+  script.
+    window.alexandmolly.main.Countdown(document.getElementById('elm-container'))

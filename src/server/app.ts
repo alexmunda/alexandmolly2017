@@ -45,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
 app.disable('x-powered-by')
 
 app.get('/', (req, res) => {
-  res.render('home', { title: 'Home Page' })
+  res.render('home', { title: 'Molly & Alex' })
 })
 
 app.get('/rsvp', (req, res) => {
