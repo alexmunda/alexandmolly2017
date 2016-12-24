@@ -23,8 +23,16 @@
   background-image: url('/assets/images/Molly_Alex_110.jpg');
 }
 
+.countdown-container {
+  height:90vh;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center;
+}
+
 .countdown {
   z-index: 1;
   text-align: center;
   color: white;
+  align-self: flex-end;
 }

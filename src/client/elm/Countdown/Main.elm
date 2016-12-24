@@ -4,7 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Time exposing (..)
 import Date exposing (..)
-import Date.Extra.Duration exposing (..)
+import Date.Extra.Period exposing (..)
+import Date.Extra.Create exposing (dateFromFields)
 
 
 main =
@@ -35,7 +36,8 @@ initialModel =
 
 initialWeddingDate : String -> Date
 initialWeddingDate dateString =
-    Date.fromString dateString |> Result.withDefault (Date.fromTime 0)
+    -- Date.fromString dateString |> Result.withDefault (Date.fromTime 0)
+    dateFromFields 2017 Oct 28 0 0 0 0
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -56,7 +58,7 @@ updateCountdown now model =
 
 countdownCol : String -> Html Msg
 countdownCol countdown =
-    div [ class "col-sm-4" ]
+    div [ class "col-xs-4" ]
         [ h2 []
             [ text countdown ]
         ]
@@ -64,9 +66,14 @@ countdownCol countdown =
 
 labelCol : String -> Html Msg
 labelCol label =
-    div [ class "col-sm-4" ]
+    div [ class "col-xs-4" ]
         [ text label
         ]
+
+
+getDays : Int -> Int -> Int
+getDays days weeks =
+    days + (weeks * 7)
 
 
 renderCountdown : Model -> Html Msg
@@ -75,21 +82,23 @@ renderCountdown model =
         countdown =
             model.countdown
     in
-        div [ class "countdown container" ]
-            [ div [ class "row" ]
-                [ div [ class "col-sm-4 col-sm-offset-4" ]
-                    [ h1 [] [ text "10/28/2017" ]
+        div [ class "countdown-container" ]
+            [ div [ class "countdown" ]
+                [ div [ class "row" ]
+                    [ countdownCol <| toString <| getDays countdown.day countdown.week
+                    , countdownCol <| toString <| countdown.hour + 22
+                    , countdownCol <| toString <| countdown.minute + 59
                     ]
-                ]
-            , div [ class "row" ]
-                [ countdownCol <| toString countdown.month
-                , countdownCol <| toString countdown.day
-                , countdownCol <| toString countdown.hour
-                ]
-            , div [ class "row" ]
-                [ labelCol "Months"
-                , labelCol "Days"
-                , labelCol "Hours"
+                , div [ class "row" ]
+                    [ labelCol "Days"
+                    , labelCol "Hours"
+                    , labelCol "Minutes"
+                    ]
+                , div [ class "row" ]
+                    [ div [ class "col-xs-12" ]
+                        [ h1 [] [ text "10/28/2017" ]
+                        ]
+                    ]
                 ]
             ]
 
