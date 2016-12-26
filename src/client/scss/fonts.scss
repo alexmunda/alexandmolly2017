@@ -95,3 +95,10 @@
        url('../assets/fonts/proxima-nova_2_0.ttf') format('truetype');
   font-weight: 600;
 }
+
+// JosefinSlab-Light
+@font-face {
+  font-family: 'JosefinSlab';
+  src: url('../assets/fonts/josefinslab-light.woff2') format('woff2'),
+       url('../assets/fonts/josefinslab-light.ttf') format('truetype');
+}

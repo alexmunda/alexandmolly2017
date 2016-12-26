@@ -59,14 +59,14 @@ updateCountdown now model =
 countdownCol : String -> Html Msg
 countdownCol countdown =
     div [ class "col-xs-4" ]
-        [ h2 []
+        [ h1 [ class "countdown-number" ]
             [ text countdown ]
         ]
 
 
 labelCol : String -> Html Msg
 labelCol label =
-    div [ class "col-xs-4" ]
+    div [ class "col-xs-4 countdown-label" ]
         [ text label
         ]
 
@@ -86,18 +86,13 @@ renderCountdown model =
             [ div [ class "countdown" ]
                 [ div [ class "row" ]
                     [ countdownCol <| toString <| getDays countdown.day countdown.week
-                    , countdownCol <| toString <| countdown.hour + 22
+                    , countdownCol <| toString <| countdown.hour + 23
                     , countdownCol <| toString <| countdown.minute + 59
                     ]
                 , div [ class "row" ]
                     [ labelCol "Days"
                     , labelCol "Hours"
                     , labelCol "Minutes"
-                    ]
-                , div [ class "row" ]
-                    [ div [ class "col-xs-12" ]
-                        [ h1 [] [ text "10/28/2017" ]
-                        ]
                     ]
                 ]
             ]
