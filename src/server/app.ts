@@ -49,11 +49,15 @@ app.get('/', (req, res) => {
 })
 
 app.get('/rsvp', (req, res) => {
-  res.render('rsvp', { title: 'RSVP Page' })
+  res.render('rsvp', { title: 'RSVP' })
+})
+
+app.get('/registry', (req, res) => {
+  res.render('registry', { title: 'Registry' })
 })
 
 app.get('/about', (req, res) => {
-  res.render('about', { title: 'About Page' })
+  res.render('about', { title: 'About' })
 })
 
 app.post('/api/authenticate', (req, res) => {
