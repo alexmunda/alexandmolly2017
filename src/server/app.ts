@@ -1,6 +1,6 @@
 import { jwtSecret, validAccessCode } from './constants/authenticationConstants'
-import dbConfig from './db/config'
-import { createTables, insertDefaultGroup, insertGuestsWithGroup, selectNewestGroupId } from './db/queries'
+// import dbConfig from './db/config'
+// import { createTables, insertDefaultGroup, insertGuestsWithGroup, selectNewestGroupId } from './db/queries'
 import { StaticAssets } from './static'
 
 const bodyParser = require('body-parser')
@@ -8,11 +8,11 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const Path = require('path')
 const Fs = require('fs')
-const Pool = require('pg').Pool
+// const Pool = require('pg').Pool
 
 const app = express()
 
-const pool = new Pool(dbConfig)
+// const pool = new Pool(dbConfig)
 
 app.set('views', Path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
@@ -98,25 +98,27 @@ app.post('/api/token', (req, res) => {
   }
 })
 
-app.post('/api/rsvp', (req, res) => {
-  const { rsvp } = req.body
-  const onError = () => res.status(400).send({ message: 'Error saving RSVP.' })
+// app.post('/api/rsvp', (req, res) => {
+//   const { rsvp } = req.body
+//   const onError = () => res.status(400).send({ message: 'Error saving RSVP.' })
+//
+//   if (rsvp.hasErrors === 'true' || !rsvp) {
+//     return onError()
+//   }
+//
+//   return insertDefaultGroup(pool)
+//     .then(() => selectNewestGroupId(pool))
+//     .then((result) => result.rows[0].group_id)
+//     .then((groupId) => insertGuestsWithGroup(pool, rsvp, groupId))
+//     .then(() => res.status(201).send({ message: 'RSVP successful.' }))
+//     .catch((err) => {
+//       console.log(err)
+//       return onError()
+//     })
+// })
 
-  if (rsvp.hasErrors === 'true' || !rsvp) {
-    return onError()
-  }
-
-  return insertDefaultGroup(pool)
-    .then(() => selectNewestGroupId(pool))
-    .then((result) => result.rows[0].group_id)
-    .then((groupId) => insertGuestsWithGroup(pool, rsvp, groupId))
-    .then(() => res.status(201).send({ message: 'RSVP successful.' }))
-    .catch((err) => {
-      console.log(err)
-      return onError()
-    })
-})
-
-createTables(pool)
-  .then(app.listen(4444,
-    () => console.log('Listening at http://localhost:4444')))
+// createTables(pool)
+//   .then(
+    app.listen(4444,
+    () => console.log('Listening at http://localhost:4444'))
+// )
