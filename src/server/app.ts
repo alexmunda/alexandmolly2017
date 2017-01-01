@@ -60,6 +60,10 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'About' })
 })
 
+app.get('/photos', (req, res) => {
+  res.render('photos', { title: 'Photos' })
+})
+
 app.post('/api/authenticate', (req, res) => {
   const { userToken } = req.body
 
