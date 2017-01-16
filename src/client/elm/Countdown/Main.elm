@@ -8,6 +8,7 @@ import Date.Extra.Period exposing (..)
 import Date.Extra.Create exposing (dateFromFields)
 
 
+main : Program Never Model Msg
 main =
     Html.program
         { init = ( initialModel, Cmd.none )
@@ -36,8 +37,7 @@ initialModel =
 
 initialWeddingDate : String -> Date
 initialWeddingDate dateString =
-    -- Date.fromString dateString |> Result.withDefault (Date.fromTime 0)
-    dateFromFields 2017 Oct 28 0 0 0 0
+    dateFromFields 2017 Oct 27 0 0 0 0
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -81,18 +81,39 @@ renderCountdown model =
     let
         countdown =
             model.countdown
+
+        days =
+            getDays countdown.day countdown.week
+
+        hours =
+            countdown.hour + 23
+
+        minutes =
+            countdown.minute + 59
+
+        pluralize num =
+            if num == 1 then
+                ""
+            else
+                "s"
+
+        countDownVal num =
+            if countdown.hour == 0 && countdown.minute == 0 && days == 0 then
+                "--"
+            else
+                toString num
     in
         div [ class "countdown-container" ]
             [ div [ class "countdown" ]
                 [ div [ class "row" ]
-                    [ countdownCol <| toString <| getDays countdown.day countdown.week
-                    , countdownCol <| toString <| countdown.hour + 23
-                    , countdownCol <| toString <| countdown.minute + 59
+                    [ countdownCol <| countDownVal days
+                    , countdownCol <| countDownVal hours
+                    , countdownCol <| countDownVal minutes
                     ]
                 , div [ class "row" ]
-                    [ labelCol "Days"
-                    , labelCol "Hours"
-                    , labelCol "Minutes"
+                    [ labelCol <| "Day" ++ pluralize days
+                    , labelCol <| "Hour" ++ pluralize hours
+                    , labelCol <| "Minute" ++ pluralize minutes
                     ]
                 ]
             ]
