@@ -102,3 +102,11 @@
   src: url('../assets/fonts/josefinslab-light.woff2') format('woff2'),
        url('../assets/fonts/josefinslab-light.ttf') format('truetype');
 }
+
+//rosetta-icons
+@font-face {
+  font-family: 'rosettaicons';
+  src: url('../assets/fonts/rosetta-icons-Regular.eot');
+  src: url('../assets/fonts/rosetta-icons-Regular.woff') format('woff'),
+       url('../assets/fonts/rosetta-icons-Regular.ttf') format('truetype');
+}

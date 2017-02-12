@@ -104,3 +104,152 @@
   display: block;
   margin: auto;
 }
+
+.gallery-overlay {
+  display: block;
+  z-index: 2000;
+  background: rgba(0,0,0,0.8);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.gallery {
+  display: block;
+  position: fixed;
+  overflow: auto;
+  overflow-x: hidden;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3000;
+  text-align: center;
+}
+
+.gallery-closeTarget {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.gallery-content {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  min-width: 520px;
+  min-height: 338px;
+  background-color: #fff;
+  border-radius: 7px;
+}
+
+.modal-close {
+  right: -30px;
+  padding: 0;
+  height: auto;
+  position: absolute;
+  top: 9px;
+  width: 20px;
+}
+
+.modal-btn {
+  background-color: transparent;
+  cursor: pointer;
+  border: 0;
+  -webkit-appearance: button;
+  text-transform: none;
+  overflow: visible;
+}
+
+.gallery-media {
+  background: black;
+  border-radius: 6px 6px 0 0;
+  line-height: 0;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+
+  img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.galleryNav {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  height: 100%;
+}
+
+.galleryNav--prev {
+  left: 0;
+  width: 33%;
+}
+
+.galleryNav--next {
+  left: 0;
+  width: 67%;
+}
+
+.galleryNav-handle {
+  position: absolute;
+  top: 35%;
+  width: 50px;
+  height: 200px;
+  margin-top: -17px;
+  display: block;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.05s;
+  transition-timing-function: ease-in-out;
+  transition-delay: initial;
+  color: white;
+  background: 0;
+  line-height: 200px;
+}
+
+.galleryNav-handle--prev {
+  left: -50px;
+}
+
+.galleryNav-handle--next {
+  right: -50px;
+}
+
+icon--large {
+  font-size: 21px;
+  line-height: 1;
+}
+
+.icon {
+  background: transparent;
+  display: inline-block;
+  font-style: normal;
+  vertical-align: baseline;
+  position: relative;
+}
+
+.icon--caretLeft::before {
+  content: "\f172";
+}
+
+.icon--caretRight::before {
+  content: "\f173";
+}
+
+.icon::before, .icon::after {
+  display: block;
+  font-family: "rosettaicons";
+  font-weight: normal;
+  font-style: normal;
+  text-align: center;
+}
+
+.enabled {
+  opacity: .3;
+}
