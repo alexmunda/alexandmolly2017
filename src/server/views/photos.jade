@@ -1,4 +1,11 @@
 extends page
 
 block maincontent
-  .container-fluid
+  header#header-navbar
+    h2= title
+
+  .page-content#elm-container
+
+block append scripts
+  script.
+    window.alexandmolly.main.Photos(document.getElementById('elm-container'))
