@@ -17,6 +17,7 @@ main =
 
 type Msg
     = PhotoSelected Photo
+    | PhotoClosed
 
 
 type alias Photo =
@@ -55,6 +56,9 @@ update msg model =
     case msg of
         PhotoSelected photo ->
             ( { model | selectedPhoto = Just photo }, Cmd.none )
+
+        PhotoClosed ->
+            ( { model | selectedPhoto = Nothing }, Cmd.none )
 
 
 renderPhotoCol : Photo -> Html Msg
@@ -106,4 +110,35 @@ renderPhotoRows photos =
 
 view : Model -> Html Msg
 view model =
-    div [ class "container" ] <| renderPhotoRows model.photos
+    case model.selectedPhoto of
+        Just selectedPhoto ->
+            div [ class "gallery" ]
+                [ div [ class "gallery-closeTarget" ] []
+                , div [ class "gallery-content no-grid", style [ ( "width", "800px" ), ( "min-height", "0px" ) ] ]
+                    [ button [ class "modal-btn modal-close js-close", onClick PhotoClosed ]
+                        [ span [ class "icon icon--close icon--large" ]
+                            [ span [ class "visuallyhidden" ] [ text "Close" ]
+                            ]
+                        ]
+                    , div [ class "gallery-media" ]
+                        [ img [ class "media-image img img-responsive", src selectedPhoto.url ] []
+                        ]
+                    , div [ class "galleryNav galleryNav--prev" ]
+                        [ span [ class "galleryNav-handle galleryNav-handle--prev" ]
+                            [ span [ class "icon icon--caretLeft icon--large" ]
+                                [ span [ class "u-hiddenVisually" ] [ text "Previous" ]
+                                ]
+                            ]
+                        ]
+                    , div [ class "galleryNav galleryNav--next" ]
+                        [ span [ class "galleryNav-handle galleryNav-handle--next" ]
+                            [ span [ class "icon icon--caretRight icon--large" ]
+                                [ span [ class "u-hiddenVisually" ] [ text "Next" ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+
+        Nothing ->
+            div [ class "container photo-container" ] <| renderPhotoRows model.photos
