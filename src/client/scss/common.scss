@@ -234,22 +234,6 @@
   position: relative;
 }
 
-.icon--caretLeft::before {
-  content: "\f172";
-}
-
-.icon--caretRight::before {
-  content: "\f173";
-}
-
-.icon::before, .icon::after {
-  display: block;
-  font-family: "rosettaicons";
-  font-weight: normal;
-  font-style: normal;
-  text-align: center;
-}
-
 .enabled {
   opacity: .3;
 }

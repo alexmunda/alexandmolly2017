@@ -18,6 +18,8 @@ main =
 type Msg
     = PhotoSelected Photo
     | PhotoClosed
+    | NextPhoto
+    | PreviousPhoto
 
 
 type alias Photo =
@@ -28,6 +30,8 @@ type alias Photo =
 
 type alias Model =
     { selectedPhoto : Maybe Photo
+    , previousPhotos : List Photo
+    , nextPhotos : List Photo
     , photos : List Photo
     }
 
@@ -36,6 +40,8 @@ initialModel : Model
 initialModel =
     { photos = List.map createPhoto <| List.range 1 49
     , selectedPhoto = Nothing
+    , previousPhotos = []
+    , nextPhotos = []
     }
 
 
@@ -51,14 +57,84 @@ buildPhotoUrl photoId =
     "/assets/images/photos/" ++ toString photoId ++ ".jpg"
 
 
+handleNextPhoto : Model -> Model
+handleNextPhoto model =
+    let
+        selectedPhoto =
+            List.head model.nextPhotos
+
+        nextPhotos =
+            case selectedPhoto of
+                Just photo ->
+                    List.drop 1 model.nextPhotos
+
+                Nothing ->
+                    model.nextPhotos
+
+        previousPhotos =
+            case ( selectedPhoto, model.selectedPhoto ) of
+                ( Just newSelectedPhoto, Just oldSelectedPhoto ) ->
+                    oldSelectedPhoto :: model.previousPhotos
+
+                ( _, _ ) ->
+                    model.previousPhotos
+    in
+        { model
+            | selectedPhoto = selectedPhoto
+            , previousPhotos = previousPhotos
+            , nextPhotos = nextPhotos
+        }
+
+
+handlePreviousPhoto : Model -> Model
+handlePreviousPhoto model =
+    let
+        selectedPhoto =
+            List.head model.previousPhotos
+
+        nextPhotos =
+            case ( selectedPhoto, model.selectedPhoto ) of
+                ( Just newSelectedPhoto, Just oldSelectedPhoto ) ->
+                    oldSelectedPhoto :: model.nextPhotos
+
+                ( _, _ ) ->
+                    model.nextPhotos
+
+        previousPhotos =
+            case selectedPhoto of
+                Just photo ->
+                    List.drop 1 model.previousPhotos
+
+                Nothing ->
+                    model.previousPhotos
+    in
+        { model
+            | selectedPhoto = selectedPhoto
+            , previousPhotos = previousPhotos
+            , nextPhotos = nextPhotos
+        }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         PhotoSelected photo ->
-            ( { model | selectedPhoto = Just photo }, Cmd.none )
+            ( { model
+                | selectedPhoto = Just photo
+                , previousPhotos = (List.drop 1 << List.reverse << List.take photo.index) model.photos
+                , nextPhotos = List.drop photo.index model.photos
+              }
+            , Cmd.none
+            )
 
         PhotoClosed ->
             ( { model | selectedPhoto = Nothing }, Cmd.none )
+
+        NextPhoto ->
+            ( handleNextPhoto model, Cmd.none )
+
+        PreviousPhoto ->
+            ( handlePreviousPhoto model, Cmd.none )
 
 
 renderPhotoCol : Photo -> Html Msg
@@ -114,10 +190,10 @@ view model =
         Just selectedPhoto ->
             div [ class "gallery" ]
                 [ div [ class "gallery-closeTarget" ] []
-                , div [ class "gallery-content no-grid", style [ ( "width", "800px" ), ( "min-height", "0px" ) ] ]
-                    [ button [ class "modal-btn modal-close js-close", onClick PhotoClosed ]
+                , div [ class "gallery-content", style [ ( "width", "800px" ), ( "min-height", "0px" ) ] ]
+                    [ button [ class "modal-btn modal-close", onClick PhotoClosed ]
                         [ span [ class "icon icon--close icon--large" ]
-                            [ span [ class "visuallyhidden" ] [ text "Close" ]
+                            [ i [ class "fa fa-times" ] []
                             ]
                         ]
                     , div [ class "gallery-media" ]
@@ -125,15 +201,15 @@ view model =
                         ]
                     , div [ class "galleryNav galleryNav--prev" ]
                         [ span [ class "galleryNav-handle galleryNav-handle--prev" ]
-                            [ span [ class "icon icon--caretLeft icon--large" ]
-                                [ span [ class "u-hiddenVisually" ] [ text "Previous" ]
+                            [ span [ class "icon icon--large", onClick PreviousPhoto ]
+                                [ i [ class "fa fa-chevron-left" ] []
                                 ]
                             ]
                         ]
                     , div [ class "galleryNav galleryNav--next" ]
                         [ span [ class "galleryNav-handle galleryNav-handle--next" ]
-                            [ span [ class "icon icon--caretRight icon--large" ]
-                                [ span [ class "u-hiddenVisually" ] [ text "Next" ]
+                            [ span [ class "icon icon--large", onClick NextPhoto ]
+                                [ i [ class "fa fa-chevron-right" ] []
                                 ]
                             ]
                         ]
