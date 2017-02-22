@@ -121,7 +121,7 @@
   position: fixed;
   overflow: auto;
   overflow-x: hidden;
-  top: 0;
+  top: 10vh;
   right: 0;
   bottom: 0;
   left: 0;
@@ -154,6 +154,11 @@
   position: absolute;
   top: 9px;
   width: 20px;
+
+  .icon--close {
+    color: white;
+    font-size: 21px;
+  }
 }
 
 .modal-btn {
@@ -189,11 +194,19 @@
 .galleryNav--prev {
   left: 0;
   width: 33%;
+
+  .icon--left {
+    color: white;
+  }
 }
 
 .galleryNav--next {
   left: 0;
   width: 67%;
+
+  .icon--right {
+    color: white;
+  }
 }
 
 .galleryNav-handle {

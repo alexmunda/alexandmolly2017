@@ -186,35 +186,48 @@ renderPhotoRows photos =
 
 view : Model -> Html Msg
 view model =
-    case model.selectedPhoto of
-        Just selectedPhoto ->
-            div [ class "gallery" ]
-                [ div [ class "gallery-closeTarget" ] []
-                , div [ class "gallery-content", style [ ( "width", "800px" ), ( "min-height", "0px" ) ] ]
-                    [ button [ class "modal-btn modal-close", onClick PhotoClosed ]
-                        [ span [ class "icon icon--close icon--large" ]
-                            [ i [ class "fa fa-times" ] []
-                            ]
-                        ]
-                    , div [ class "gallery-media" ]
-                        [ img [ class "media-image img img-responsive", src selectedPhoto.url ] []
-                        ]
-                    , div [ class "galleryNav galleryNav--prev" ]
-                        [ span [ class "galleryNav-handle galleryNav-handle--prev" ]
-                            [ span [ class "icon icon--large", onClick PreviousPhoto ]
-                                [ i [ class "fa fa-chevron-left" ] []
-                                ]
-                            ]
-                        ]
-                    , div [ class "galleryNav galleryNav--next" ]
-                        [ span [ class "galleryNav-handle galleryNav-handle--next" ]
-                            [ span [ class "icon icon--large", onClick NextPhoto ]
-                                [ i [ class "fa fa-chevron-right" ] []
-                                ]
+    div [ class "container photo-container" ] <|
+        renderPhotoRows model.photos
+            ++ case model.selectedPhoto of
+                Just selectedPhoto ->
+                    [ div [ class "gallery-overlay", onClick PhotoClosed ]
+                        []
+                    , div
+                        [ class "gallery" ]
+                        [ div [ class "gallery-closeTarget", onClick PhotoClosed ] []
+                        , div [ class "col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2" ]
+                            [ img [ class "media-image img img-responsive", src selectedPhoto.url ] []
                             ]
                         ]
                     ]
-                ]
 
-        Nothing ->
-            div [ class "container photo-container" ] <| renderPhotoRows model.photos
+                --     [ class "gallery" ]
+                --     [ div [ class "gallery-closeTarget" ] []
+                --     , div [ class "gallery-content", style [ ( "width", "800px" ), ( "min-height", "0px" ) ] ]
+                --         [ button [ class "modal-btn modal-close", onClick PhotoClosed ]
+                --             [ span [ class "icon icon--close icon--large" ]
+                --                 [ i [ class "fa fa-times" ] []
+                --                 ]
+                --             ]
+                --         , div [ class "gallery-media" ]
+                --             [ img [ class "media-image img img-responsive", src selectedPhoto.url ] []
+                --             ]
+                --         , div [ class "galleryNav galleryNav--prev" ]
+                --             [ span [ class "galleryNav-handle galleryNav-handle--prev" ]
+                --                 [ span [ class "icon icon--large icon--left", onClick PreviousPhoto ]
+                --                     [ i [ class "fa fa-arrow-left" ] []
+                --                     ]
+                --                 ]
+                --             ]
+                --         , div [ class "galleryNav galleryNav--next" ]
+                --             [ span [ class "galleryNav-handle galleryNav-handle--next" ]
+                --                 [ span [ class "icon icon--large", onClick NextPhoto ]
+                --                     [ i [ class "fa fa-arrow-right" ] []
+                --                     ]
+                --                 ]
+                --             ]
+                --         ]
+                --     ]
+                -- ]
+                Nothing ->
+                    [ span [] [] ]
