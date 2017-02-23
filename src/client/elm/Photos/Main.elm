@@ -195,7 +195,7 @@ view model =
                     , div
                         [ class "gallery" ]
                         [ div [ class "gallery-closeTarget", onClick PhotoClosed ] []
-                        , div [ class "col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2" ]
+                        , div [ class "col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 gallery-media" ]
                             [ img [ class "media-image img img-responsive", src selectedPhoto.url ] []
                             ]
                         ]

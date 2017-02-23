@@ -119,7 +119,7 @@
 .gallery {
   display: block;
   position: fixed;
-  overflow: auto;
+  overflow: hidden;
   overflow-x: hidden;
   top: 10vh;
   right: 0;
@@ -171,8 +171,6 @@
 }
 
 .gallery-media {
-  background: black;
-  border-radius: 6px 6px 0 0;
   line-height: 0;
   overflow: hidden;
   position: relative;
