@@ -256,3 +256,37 @@
 .photo-container {
   padding-top: 50px;
 }
+
+.left-arrow {
+  z-index: 9999;
+  color: lightgrey;
+  position: absolute;
+  top: 50%;
+  left: 30px;
+  font-size: 25px;
+}
+
+.arrow:hover {
+  cursor: pointer;
+  color: white;
+}
+
+
+.right-arrow {
+  z-index: 9999;
+  color: lightgrey;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  font-size: 25px;
+}
+
+img {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.hidden {
+  display: none;
+}
