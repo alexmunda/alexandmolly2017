@@ -3,6 +3,7 @@ module Photos.Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import List.Extra exposing (greedyGroupsOf)
 
 
 main : Program Never Model Msg
@@ -148,40 +149,11 @@ renderPhotoCol photo =
 
 renderPhotoRows : List Photo -> List (Html Msg)
 renderPhotoRows photos =
-    case photos of
-        [] ->
-            [ span [] [] ]
-
-        first :: [] ->
-            [ div [ class "row" ]
-                [ renderPhotoCol first
-                ]
-            ]
-
-        first :: second :: [] ->
-            [ div [ class "row" ]
-                [ renderPhotoCol first
-                , renderPhotoCol second
-                ]
-            ]
-
-        first :: second :: third :: [] ->
-            [ div [ class "row" ]
-                [ renderPhotoCol first
-                , renderPhotoCol second
-                , renderPhotoCol third
-                ]
-            ]
-
-        first :: second :: third :: fourth :: rest ->
-            [ div [ class "row" ]
-                [ renderPhotoCol first
-                , renderPhotoCol second
-                , renderPhotoCol third
-                , renderPhotoCol fourth
-                ]
-            ]
-                ++ renderPhotoRows rest
+    let
+        renderRow groups =
+            List.map renderPhotoCol groups |> div [ class "row" ]
+    in
+        greedyGroupsOf 4 photos |> List.map renderRow
 
 
 view : Model -> Html Msg
