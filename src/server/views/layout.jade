@@ -1,0 +1,24 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=Edge', charset='utf-8')
+    block title
+      title= title
+    link(rel='stylesheet', href='/assets/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href=WebpackPath('main.css'))
+    block styles
+
+    //- link(rel='icon', href='/assets/images/favicon48.png', sizes='32x32')
+    //- link(rel='icon', href='/assets/images/favicon48.png', sizes='192x192')
+    //- link(rel='apple-touch-icon-precomposed', href='/assets/images/favicon48.png')
+    //- meta(name='msapplication-TileImage', content='/assets/images/favicon48.png')
+
+  body
+    block content
+
+    block scripts
+      script.
+        window.alexandmolly = window.alexandmolly || {}
+
+      script(src=WebpackPath('main.js'))

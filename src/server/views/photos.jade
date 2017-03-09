@@ -1,0 +1,10 @@
+extends page
+
+block maincontent
+  header#header-navbar
+
+  .page-content#elm-container
+
+block append scripts
+  script.
+    window.alexandmolly.main.Photos(document.getElementById('elm-container'))

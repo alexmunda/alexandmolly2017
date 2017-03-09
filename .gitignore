@@ -1,3 +1,6 @@
 node_modules
-dist
-dist_server
+elm-stuff
+
+src/client/dist
+src/server/**/*.js
+src/server/**/*.js.map

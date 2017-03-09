@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  #page-container
+    // include ./includes/sidebar.jade
+    nav.navbar.navbar-default.navbar-fixed-top
+      .container
+        .navbar-header
+          button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+            span.sr-only
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a(class='navbar-brand', href='/') Molly & Alex
+        #navbar.navbar-collapse.collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/about') About
+            li
+              a(href='/registry') Registry
+            li
+              a(href='/photos') Photos
+            //- li
+            //-   a(href='/rsvp') RSVP
+
+
+    #main-container
+      block maincontent

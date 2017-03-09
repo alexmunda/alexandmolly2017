@@ -1,0 +1,10 @@
+extends page
+
+block maincontent
+  ul#home-background.home-background
+    li#home-background-image
+  .page-content#elm-container
+
+block append scripts
+  script.
+    window.alexandmolly.main.Countdown(document.getElementById('elm-container'))
