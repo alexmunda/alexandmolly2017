@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import List.Extra exposing (greedyGroupsOf)
+import Keyboard.Extra
 
 
 main : Program Never Model Msg
@@ -12,7 +13,7 @@ main =
         { init = ( initialModel, Cmd.none )
         , update = update
         , view = view
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
 
 
@@ -21,6 +22,7 @@ type Msg
     | PhotoClosed
     | NextPhoto
     | PreviousPhoto
+    | KeyboardMsg Keyboard.Extra.Msg
 
 
 type alias Photo =
@@ -35,6 +37,11 @@ type alias Model =
     , nextPhotos : List Photo
     , photos : List Photo
     }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.map KeyboardMsg Keyboard.Extra.subscriptions
 
 
 initialModel : Model
@@ -62,23 +69,34 @@ handleNextPhoto : Model -> Model
 handleNextPhoto model =
     let
         selectedPhoto =
-            List.head model.nextPhotos
-
-        nextPhotos =
-            case selectedPhoto of
-                Just photo ->
-                    List.drop 1 model.nextPhotos
+            case List.head model.nextPhotos of
+                Just nextPhoto ->
+                    Just nextPhoto
 
                 Nothing ->
-                    model.nextPhotos
+                    model.selectedPhoto
+
+        nextPhotos =
+            if selectedPhoto == model.selectedPhoto then
+                model.nextPhotos
+            else
+                case selectedPhoto of
+                    Just photo ->
+                        List.drop 1 model.nextPhotos
+
+                    Nothing ->
+                        model.nextPhotos
 
         previousPhotos =
-            case ( selectedPhoto, model.selectedPhoto ) of
-                ( Just newSelectedPhoto, Just oldSelectedPhoto ) ->
-                    oldSelectedPhoto :: model.previousPhotos
+            if selectedPhoto == model.selectedPhoto then
+                model.previousPhotos
+            else
+                case ( selectedPhoto, model.selectedPhoto ) of
+                    ( Just newSelectedPhoto, Just oldSelectedPhoto ) ->
+                        oldSelectedPhoto :: model.previousPhotos
 
-                ( _, _ ) ->
-                    model.previousPhotos
+                    ( _, _ ) ->
+                        model.previousPhotos
     in
         { model
             | selectedPhoto = selectedPhoto
@@ -91,23 +109,34 @@ handlePreviousPhoto : Model -> Model
 handlePreviousPhoto model =
     let
         selectedPhoto =
-            List.head model.previousPhotos
-
-        nextPhotos =
-            case ( selectedPhoto, model.selectedPhoto ) of
-                ( Just newSelectedPhoto, Just oldSelectedPhoto ) ->
-                    oldSelectedPhoto :: model.nextPhotos
-
-                ( _, _ ) ->
-                    model.nextPhotos
-
-        previousPhotos =
-            case selectedPhoto of
-                Just photo ->
-                    List.drop 1 model.previousPhotos
+            case List.head model.previousPhotos of
+                Just previousPhoto ->
+                    Just previousPhoto
 
                 Nothing ->
-                    model.previousPhotos
+                    model.selectedPhoto
+
+        nextPhotos =
+            if selectedPhoto == model.selectedPhoto then
+                model.nextPhotos
+            else
+                case ( selectedPhoto, model.selectedPhoto ) of
+                    ( Just newSelectedPhoto, Just oldSelectedPhoto ) ->
+                        oldSelectedPhoto :: model.nextPhotos
+
+                    ( _, _ ) ->
+                        model.nextPhotos
+
+        previousPhotos =
+            if selectedPhoto == model.selectedPhoto then
+                model.previousPhotos
+            else
+                case selectedPhoto of
+                    Just photo ->
+                        List.drop 1 model.previousPhotos
+
+                    Nothing ->
+                        model.previousPhotos
     in
         { model
             | selectedPhoto = selectedPhoto
@@ -137,11 +166,40 @@ update msg model =
         PreviousPhoto ->
             ( handlePreviousPhoto model, Cmd.none )
 
+        KeyboardMsg keyMsg ->
+            let
+                newModel =
+                    Maybe.map getNewModel model.selectedPhoto |> Maybe.withDefault model
+
+                state =
+                    Keyboard.Extra.update keyMsg Keyboard.Extra.initialState
+
+                arrow =
+                    Keyboard.Extra.arrowsDirection state
+
+                getNewModel selectedPhoto =
+                    case model.selectedPhoto of
+                        Just photo ->
+                            case arrow of
+                                Keyboard.Extra.West ->
+                                    handlePreviousPhoto model
+
+                                Keyboard.Extra.East ->
+                                    handleNextPhoto model
+
+                                _ ->
+                                    model
+
+                        Nothing ->
+                            model
+            in
+                ( newModel, Cmd.none )
+
 
 renderPhotoCol : Photo -> Html Msg
 renderPhotoCol photo =
     div [ class "col col-sm-3" ]
-        [ div [ class "thumbnail" ]
+        [ div [ class "thumbnail", style [ ( "border", "none" ) ] ]
             [ img [ onClick <| PhotoSelected photo, src photo.url ] []
             ]
         ]
