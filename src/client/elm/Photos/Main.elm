@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import List.Extra exposing (greedyGroupsOf)
 import Keyboard.Extra
+import Ports.EnableScroll exposing (enableScroll)
 
 
 main : Program Never Model Msg
@@ -154,11 +155,11 @@ update msg model =
                 , previousPhotos = (List.drop 1 << List.reverse << List.take photo.index) model.photos
                 , nextPhotos = List.drop photo.index model.photos
               }
-            , Cmd.none
+            , enableScroll False
             )
 
         PhotoClosed ->
-            ( { model | selectedPhoto = Nothing }, Cmd.none )
+            ( { model | selectedPhoto = Nothing }, enableScroll True )
 
         NextPhoto ->
             ( handleNextPhoto model, Cmd.none )
