@@ -1,4 +1,5 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+console.log('ENV', process.env.NODE_ENV)
 const DEVELOPMENT = process.env.NODE_ENV !== 'production'
 const PRODUCTION = !DEVELOPMENT
 const ELM_DEBUG = DEVELOPMENT && process.env.ELM_DEBUG === 'true'
@@ -9,6 +10,7 @@ const Path = require('path')
 const Webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const ManifestPlugin = require('webpack-manifest-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const _ = require('lodash')
 
@@ -30,10 +32,10 @@ const ScriptsPath = Path.join(__dirname, '/src/client/scripts')
 const ServePath = '/assets/'
 
 module.exports = {
-   entry: [
+   entry: _.compact([
       OnlyIn(DEVELOPMENT, 'webpack-hot-middleware/client'),
       `${ScriptsPath}/main.js`
-   ],
+   ]),
    output: {
       filename: '[name].js',
       path: OutputPath,
@@ -83,6 +85,9 @@ module.exports = {
             from: AssetsPath,
             to: OutputPath
          }
-      ])
+      ]),
+      new ManifestPlugin({
+         fileName: 'manifest.json',
+      }),
    ])
 }
