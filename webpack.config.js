@@ -1,5 +1,4 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-console.log('ENV', process.env.NODE_ENV)
 const DEVELOPMENT = process.env.NODE_ENV !== 'production'
 const PRODUCTION = !DEVELOPMENT
 const ELM_DEBUG = DEVELOPMENT && process.env.ELM_DEBUG === 'true'
