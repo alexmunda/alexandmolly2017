@@ -73,5 +73,5 @@ app.post('/api/token', function (req, res) {
         return res.status(201).send({ token: token });
     }
 });
-app.listen(process.env.port || 4444, function () { return console.log("Listening at http://localhost:" + (process.env.port || 4444)); });
+app.listen(process.env.PORT || 4444, function () { return console.log("Listening at http://localhost:" + (process.env.PORT || 4444)); });
 //# sourceMappingURL=app.js.map

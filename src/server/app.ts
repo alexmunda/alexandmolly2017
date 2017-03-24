@@ -123,6 +123,6 @@ app.post('/api/token', (req, res) => {
 
 // createTables(pool)
 //   .then(
-    app.listen(process.env.port || 4444,
-      () => console.log(`Listening at http://localhost:${process.env.port || 4444}`))
+    app.listen(process.env.PORT || 4444,
+      () => console.log(`Listening at http://localhost:${process.env.PORT || 4444}`))
 // )
