@@ -1,6 +1,3 @@
 node_modules
 elm-stuff
 
-src/client/dist
-src/server/**/*.js
-src/server/**/*.js.map

@@ -4,7 +4,7 @@
   "description": "Alex and Molly wedding website",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node src/server/app.js",
+    "start": "node src/server/app.js",
     "start:dev": "npm run build:dev && node src/server/app.js",
     "start:watch": "nodemon -w ./src/server -e ts --exec \"npm run start:dev\"",
     "build": "tsc && webpack",
