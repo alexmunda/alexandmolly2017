@@ -226,7 +226,7 @@ view model =
                     , div
                         [ class "gallery" ]
                         [ div [ class "gallery-closeTarget", onClick PhotoClosed ] []
-                        , div [ class "col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 gallery-media" ]
+                        , div [ class "col-sm-8 col-sm-offset-2 col-sm-8 col-sm-offset-2 gallery-media" ]
                             [ span []
                                 [ i
                                     ([ class "fa fa-chevron-left left-arrow arrow"
