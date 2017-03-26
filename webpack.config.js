@@ -79,7 +79,7 @@ module.exports = {
       new Webpack.ProvidePlugin({$: 'jquery', jQuery: 'jquery', 'window.jQuery': 'jquery'}),
       new ExtractTextPlugin('main.css'),
       OnlyIn(PRODUCTION, new CleanWebpackPlugin([OutputPath, ElmStuffPath])),
-      // OnlyIn(PRODUCTION, new Webpack.optimize.UglifyJsPlugin()),
+      OnlyIn(PRODUCTION, new Webpack.optimize.UglifyJsPlugin()),
       new CopyWebpackPlugin([
          {
             from: AssetsPath,
