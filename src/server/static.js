@@ -1,5 +1,6 @@
 "use strict";
 var Express = require('express');
+var Favicon = require('serve-favicon');
 var Path = require('path');
 var Webpack = require('webpack');
 var WebpackDevMiddleware = require('webpack-dev-middleware');
@@ -28,6 +29,7 @@ var initializeDevelopment = function (app) {
     app.use(WebpackConfig.output.publicPath, Express.static(Paths.assets));
 };
 var initializeProduction = function (app) {
+    app.use(Favicon(Path.join(Paths.dist, './favicon.ico')));
     app.use(WebpackConfig.output.publicPath, Express.static(Paths.dist));
 };
 var initialize = function (app) {

@@ -1,5 +1,5 @@
 const Express = require('express')
-// const Favicon = require('serve-favicon')
+const Favicon = require('serve-favicon')
 const Path = require('path')
 const Webpack = require('webpack')
 const WebpackDevMiddleware = require('webpack-dev-middleware')
@@ -35,7 +35,7 @@ const initializeDevelopment = (app) => {
 }
 
 const initializeProduction = (app) => {
-   // app.use(Favicon(Path.join(Paths.dist, './favicon.ico')))
+   app.use(Favicon(Path.join(Paths.dist, './favicon.ico')))
    app.use(WebpackConfig.output.publicPath, Express.static(Paths.dist))
 }
 
