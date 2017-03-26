@@ -41,8 +41,10 @@ const initializeProduction = (app) => {
 
 const initialize = (app) => {
    if (IS_DEVELOPMENT) {
+      console.log('DEV')
       initializeDevelopment(app)
    } else {
+     console.log('PROD')
       initializeProduction(app)
    }
 }
