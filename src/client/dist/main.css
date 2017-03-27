@@ -2452,12 +2452,6 @@ nav {
   max-height: 130.55px;
   max-width: 390px; }
 
-.registry-container {
-  height: 50vh;
-  display: flex;
-  justify-content: center;
-  align-items: center; }
-
 .about-image {
   padding-top: 50px;
   padding-bottom: 20px; }
@@ -2482,12 +2476,6 @@ nav {
 .party-image-container {
   padding-top: 25px;
   margin-bottom: 25px; }
-
-.party-image {
-  width: 250px;
-  height: 250px;
-  display: block;
-  margin: auto; }
 
 .gallery-overlay {
   display: block;
@@ -2518,34 +2506,6 @@ nav {
   bottom: 0;
   left: 0; }
 
-.gallery-content {
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  min-width: 520px;
-  min-height: 338px;
-  background-color: #fff;
-  border-radius: 7px; }
-
-.modal-close {
-  right: -30px;
-  padding: 0;
-  height: auto;
-  position: absolute;
-  top: 9px;
-  width: 20px; }
-  .modal-close .icon--close {
-    color: white;
-    font-size: 21px; }
-
-.modal-btn {
-  background-color: transparent;
-  cursor: pointer;
-  border: 0;
-  -webkit-appearance: button;
-  text-transform: none;
-  overflow: visible; }
-
 .gallery-media {
   line-height: 0;
   overflow: hidden;
@@ -2554,46 +2514,6 @@ nav {
   .gallery-media img {
     display: inline-block;
     vertical-align: middle; }
-
-.galleryNav {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  height: 100%; }
-
-.galleryNav--prev {
-  left: 0;
-  width: 33%; }
-  .galleryNav--prev .icon--left {
-    color: white; }
-
-.galleryNav--next {
-  left: 0;
-  width: 67%; }
-  .galleryNav--next .icon--right {
-    color: white; }
-
-.galleryNav-handle {
-  position: absolute;
-  top: 35%;
-  width: 50px;
-  height: 200px;
-  margin-top: -17px;
-  display: block;
-  opacity: 0;
-  transition-property: opacity;
-  transition-duration: 0.05s;
-  transition-timing-function: ease-in-out;
-  transition-delay: initial;
-  color: white;
-  background: 0;
-  line-height: 200px; }
-
-.galleryNav-handle--prev {
-  left: -50px; }
-
-.galleryNav-handle--next {
-  right: -50px; }
 
 .icon--large {
   font-size: 21px;
