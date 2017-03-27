@@ -21,6 +21,12 @@ if (process.env.NODE_ENV === 'production') {
         res.locals.WebpackPath = getWebpackPath_1;
         next();
     });
+    app.use(function (req, res, next) {
+        if (req.headers['x-forwarded-proto'] !== 'https') {
+            return res.redirect(['https://', req.get('Host'), req.url].join(''));
+        }
+        next();
+    });
 }
 else {
     app.use(function (req, res, next) {
