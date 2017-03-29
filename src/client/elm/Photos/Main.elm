@@ -219,42 +219,47 @@ view : Model -> Html Msg
 view model =
     div [ class "container photo-container" ] <|
         renderPhotoRows model.photos
-            ++ case model.selectedPhoto of
-                Just selectedPhoto ->
-                    [ div [ class "gallery-overlay", onClick PhotoClosed ]
-                        []
-                    , div
-                        [ class "gallery" ]
-                        [ div [ class "gallery-closeTarget", onClick PhotoClosed ] []
-                        , div [ class "col-sm-8 col-sm-offset-2 col-sm-8 col-sm-offset-2 gallery-media" ]
-                            [ span []
-                                [ i
-                                    ([ class "fa fa-chevron-left left-arrow arrow"
-                                     ]
-                                        ++ if selectedPhoto.index == 1 then
-                                            [ class "hidden" ]
-                                           else
-                                            [ onClick PreviousPhoto
-                                            ]
-                                    )
-                                    []
-                                ]
-                            , img [ class "media-image img img-responsive", src selectedPhoto.url ] []
-                            , span []
-                                [ i
-                                    ([ class "fa fa-chevron-right right-arrow arrow"
-                                     ]
-                                        ++ if selectedPhoto.index == List.length model.photos then
-                                            [ class "hidden" ]
-                                           else
-                                            [ onClick NextPhoto
-                                            ]
-                                    )
-                                    []
+            ++ (case model.selectedPhoto of
+                    Just selectedPhoto ->
+                        [ div [ class "gallery-overlay", onClick PhotoClosed ]
+                            []
+                        , div
+                            [ class "gallery" ]
+                            [ div [ class "gallery-closeTarget", onClick PhotoClosed ] []
+                            , div [ class "col-sm-8 col-sm-offset-2 col-sm-8 col-sm-offset-2 gallery-media" ]
+                                [ span []
+                                    [ i
+                                        ([ class "fa fa-chevron-left left-arrow arrow"
+                                         ]
+                                            ++ if selectedPhoto.index == 1 then
+                                                [ class "hidden" ]
+                                               else
+                                                [ onClick PreviousPhoto
+                                                ]
+                                        )
+                                        []
+                                    ]
+                                , img [ class "media-image img img-responsive", src selectedPhoto.url ] []
+                                , span []
+                                    [ i
+                                        ([ class "fa fa-chevron-right right-arrow arrow"
+                                         ]
+                                            ++ if selectedPhoto.index == List.length model.photos then
+                                                [ class "hidden" ]
+                                               else
+                                                [ onClick NextPhoto
+                                                ]
+                                        )
+                                        []
+                                    ]
                                 ]
                             ]
                         ]
-                    ]
 
-                Nothing ->
-                    [ span [] [] ]
+                    Nothing ->
+                        [ span [] [] ]
+               )
+            ++ [ div [ class "row" ]
+                    [ p [ class "text-center" ] [ text "Photos taken by ", a [ href "http://www.bekandaddison.com/", target "blank" ] [ text "Bek & Addison" ] ]
+                    ]
+               ]
