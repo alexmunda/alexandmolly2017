@@ -2477,6 +2477,12 @@ nav {
   padding-top: 25px;
   margin-bottom: 25px; }
 
+.party-image {
+  width: 250px;
+  height: 250px;
+  display: block;
+  margin: auto; }
+
 .gallery-overlay {
   display: block;
   z-index: 2000;
@@ -2562,3 +2568,5 @@ img {
 
 .hidden {
   display: none; }
+
+/*# sourceMappingURL=main.css.map*/
