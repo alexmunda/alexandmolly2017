@@ -1,6 +1,4 @@
 import { jwtSecret, validAccessCode } from './constants/authenticationConstants'
-// import dbConfig from './db/config'
-// import { createTables, insertDefaultGroup, insertGuestsWithGroup, selectNewestGroupId } from './db/queries'
 import { StaticAssets } from './static'
 
 const bodyParser = require('body-parser')
@@ -8,11 +6,9 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const Path = require('path')
 const Fs = require('fs')
-// const Pool = require('pg').Pool
 
 const app = express()
 
-// const pool = new Pool(dbConfig)
 
 app.set('views', Path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
@@ -21,7 +17,6 @@ StaticAssets.initialize(app)
 
 app.use(bodyParser.json())
 
-// Setup config/index.ts eventually and read from there
 if (process.env.NODE_ENV === 'production') {
    const webpack_manifest_path = Path.join(__dirname, '../client/dist/manifest.json')
 

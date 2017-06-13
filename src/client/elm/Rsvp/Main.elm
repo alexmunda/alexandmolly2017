@@ -5,18 +5,17 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
+main : Program Never Model Msg
 main =
-    Html.beginnerProgram
-        { model = model
-        , view = view
+    Html.program
+        { init = ( initialModel, Cmd.none )
         , update = update
+        , view = view
+        , subscriptions = \_ -> Sub.none
         }
 
 
-type alias Model =
-    { guests : List Guest
-    , attending : Bool
-    }
+type Model =
 
 
 type alias Guest =
