@@ -5,7 +5,7 @@ interface Config {
   DB_ROOT_DIR: string
 }
 
-let config: Config = {
+const config: Config = {
   ...process.env,
   DB_ROOT_DIR: Path.join(__dirname, './db/sql')
 }
