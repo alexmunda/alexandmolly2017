@@ -4,4 +4,4 @@ set -e
 
 psql -c "DROP DATABASE alexandmolly2017;"
 psql -c "CREATE DATABASE alexandmolly2017;"
-psql -d "alexandmolly2017" -f "$PWD/scripts/create_tables.sql"
+psql -f create_tables.sql "alexandmolly2017"
