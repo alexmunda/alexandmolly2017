@@ -1,5 +1,7 @@
-import { jwtSecret, validAccessCode } from './constants/authenticationConstants'
 import { StaticAssets } from './static'
+import { DbFactory } from './db/db_factory'
+import * as M from './models'
+import * as _ from 'lodash'
 
 const bodyParser = require('body-parser')
 const express = require('express')
@@ -8,7 +10,6 @@ const Path = require('path')
 const Fs = require('fs')
 
 const app = express()
-
 
 app.set('views', Path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
@@ -66,42 +67,41 @@ app.get('/photos', (req, res) => {
   res.render('photos', { title: 'Photos' })
 })
 
-app.post('/api/authenticate', (req, res) => {
-  const { userToken } = req.body
-
-  if (!userToken) {
-    return res.status(401).send({ message: 'Invalid token.' })
+const firstRow = (res) => {
+  if (res.rows.length > 1) {
+    throw new Error('Multiple rows found, but expected only one.')
   }
 
-  jwt.verify(userToken, jwtSecret, (err, decoded) => {
-    if (err) {
-      console.log(`Error ${err}.`)
-      return res.status(401).send({ message: 'Invalid token.' })
-    }
+  if (res.rows.length === 0) {
+    return null
+  }
 
-    else if (decoded.accessCode === validAccessCode) {
-      console.log(`Decoded JWT: ${JSON.stringify(decoded)}`)
-      return res.status(200).send({ message: 'Access granted.' })
-    }
+  return res.rows[0]
+}
 
-    else {
-      return res.status(401).send({ message: 'Unable to validate token.' })
-    }
+app.get('/api/guests', (req, res) => {
+  const { first_name, last_name } = req.query
+
+  if (_.isNil(first_name) || _.isNil(last_name)) {
+    throw new Error('First and last name required.')
+  }
+
+  return DbFactory.create()
+  .sql('fetch_guest', {
+    first_name: first_name,
+    last_name: last_name,
   })
+  .then(db_res => firstRow(db_res))
+  .then((fetch_result: M.GuestFetch) => {
+    if (_.isNil(fetch_result)) {
+      res.status(404).json({ message: 'Unable to find guest.' })
+    }
 
-})
-
-app.post('/api/token', (req, res) => {
-  const { accessCode } = req.body
-
-  if (accessCode !== validAccessCode) {
-    return res.status(401).send({ message: 'Invalid access code.' })
-  }
-
-  else if (accessCode === validAccessCode) {
-    const token = jwt.sign({ accessCode: validAccessCode }, jwtSecret)
-    return res.status(201).send({ token: token })
-  }
+    return res.status(200).json(fetch_result)
+  })
+  .catch(err => {
+    return res.status(400).json({ message: err.message })
+  })
 })
 
 // app.post('/api/rsvp', (req, res) => {
