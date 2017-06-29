@@ -5,7 +5,6 @@ import * as _ from 'lodash'
 
 const bodyParser = require('body-parser')
 const express = require('express')
-const jwt = require('jsonwebtoken')
 const Path = require('path')
 const Fs = require('fs')
 
@@ -94,7 +93,7 @@ app.get('/api/guests', (req, res) => {
   .then(db_res => firstRow(db_res))
   .then((fetch_result: M.GuestFetch) => {
     if (_.isNil(fetch_result)) {
-      res.status(404).json({ message: 'Unable to find guest.' })
+      return res.status(404).json({ message: 'Unable to find guest.' })
     }
 
     return res.status(200).json(fetch_result)
