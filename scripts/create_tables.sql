@@ -5,7 +5,7 @@ CREATE TABLE party (
   display_name text NOT NULL,
   max_party_size int NOT NULL,
   party_size int NOT NULL DEFAULT 0,
-  rsvp boolean NULL,
+  attending boolean NULL,
   rsvp_on timestamp NULL,
 
   PRIMARY KEY (party_id)

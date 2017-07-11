@@ -103,27 +103,75 @@ app.get('/api/guests', (req, res) => {
   })
 })
 
-// app.post('/api/rsvp', (req, res) => {
-//   const { rsvp } = req.body
-//   const onError = () => res.status(400).send({ message: 'Error saving RSVP.' })
-//
-//   if (rsvp.hasErrors === 'true' || !rsvp) {
-//     return onError()
-//   }
-//
-//   return insertDefaultGroup(pool)
-//     .then(() => selectNewestGroupId(pool))
-//     .then((result) => result.rows[0].group_id)
-//     .then((groupId) => insertGuestsWithGroup(pool, rsvp, groupId))
-//     .then(() => res.status(201).send({ message: 'RSVP successful.' }))
-//     .catch((err) => {
-//       console.log(err)
-//       return onError()
-//     })
-// })
+const validateRsvp = (rsvp: M.Rsvp) => {
+  if (_.isNil(rsvp.guest_id) || !_.isFinite(rsvp.guest_id)) {
+    throw {
+      status: 400,
+      message: 'guest_id is required',
+    }
+  }
 
-// createTables(pool)
-//   .then(
-    app.listen(process.env.PORT || 4444,
-      () => console.log(`Listening at http://localhost:${process.env.PORT || 4444}`))
-// )
+  if (_.isNil(rsvp.party_id) || !_.isFinite(rsvp.party_id)) {
+    throw {
+      status: 400,
+      message: 'party_id is required',
+    }
+  }
+
+  if (_.isNil(rsvp.attending) || !_.isBoolean(rsvp.attending)) {
+    throw {
+      status: 400,
+      message: 'attending is required',
+    }
+  }
+
+  if (_.isNil(rsvp.party_size) || !_.isFinite(rsvp.party_size)) {
+    throw {
+      status: 400,
+      message: 'party_id is required',
+    }
+  }
+}
+
+app.post('/api/rsvp', (req, res) => {
+  const rsvp: M.Rsvp = req.body
+
+  validateRsvp(rsvp)
+
+  return DbFactory.create()
+  .transaction((transaction_db) => {
+    return transaction_db.sql('save_rsvp', {
+      guest_id: rsvp.guest_id,
+      party_id: rsvp.party_id,
+      party_size: rsvp.party_size,
+      attending: rsvp.attending,
+    })
+  })
+  .then(db_res => firstRow(db_res))
+  .then((rsvp_res: M.GuestFetch) => {
+    if (_.isNil(rsvp_res.guest) || _.isNil(rsvp_res.party)) {
+      throw {
+        status: 400,
+        message: 'Unable to save rsvp',
+      }
+    }
+
+    return rsvp_res
+  })
+})
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500)
+
+  console.log(`Error [statusCode=${err.status}] in request pipeline`, {
+    message: err.message,
+    status: err.status,
+    err: err,
+  })
+
+  return res.json({
+    error: err.message
+  })
+})
+app.listen(process.env.PORT || 4444,
+  () => console.log(`Listening at http://localhost:${process.env.PORT || 4444}`))
