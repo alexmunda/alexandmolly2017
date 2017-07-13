@@ -173,5 +173,5 @@ app.use((err, req, res, next) => {
     error: err.message
   })
 })
-app.listen(process.env.PORT || 4444,
-  () => console.log(`Listening at http://localhost:${process.env.PORT || 4444}`))
+
+app.listen(process.env.PORT || 4444, () => console.log(`Listening at http://localhost:${process.env.PORT || 4444}`))
