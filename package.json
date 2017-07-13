@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Alex and Molly wedding website",
   "main": "index.js",
+  "engines": {
+    "node": "6.11.1"
+  },
   "scripts": {
     "start": "node src/server/app.js",
     "start:dev": "npm run build:dev && NODE_ENV=development node src/server/app.js",
