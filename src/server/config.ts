@@ -1,5 +1,3 @@
-const Path = require('path')
-
 interface Config {
   DATABASE_URL: string
   DB_ROOT_DIR: string
