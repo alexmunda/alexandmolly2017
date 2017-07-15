@@ -8,7 +8,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Path = require('path');
 if (process.env.NODE_ENV === 'development') {
     process.env.DATABASE_URL = 'postgres://alex@localhost:5433/alexandmolly2017?sslmode=disable';
 }

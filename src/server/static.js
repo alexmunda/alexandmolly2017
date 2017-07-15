@@ -35,11 +35,9 @@ var initializeProduction = function (app) {
 };
 var initialize = function (app) {
     if (IS_DEVELOPMENT) {
-        console.log('DEV');
         initializeDevelopment(app);
     }
     else {
-        console.log('PROD');
         initializeProduction(app);
     }
 };

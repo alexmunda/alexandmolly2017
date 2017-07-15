@@ -81,5 +81,65 @@ app.get('/api/guests', function (req, res) {
         return res.status(400).json({ message: err.message });
     });
 });
+var validateRsvp = function (rsvp) {
+    if (_.isNil(rsvp.guest_id) || !_.isFinite(rsvp.guest_id)) {
+        throw {
+            status: 400,
+            message: 'guest_id is required',
+        };
+    }
+    if (_.isNil(rsvp.party_id) || !_.isFinite(rsvp.party_id)) {
+        throw {
+            status: 400,
+            message: 'party_id is required',
+        };
+    }
+    if (_.isNil(rsvp.attending) || !_.isBoolean(rsvp.attending)) {
+        throw {
+            status: 400,
+            message: 'attending is required',
+        };
+    }
+    if (_.isNil(rsvp.party_size) || !_.isFinite(rsvp.party_size)) {
+        throw {
+            status: 400,
+            message: 'party_id is required',
+        };
+    }
+};
+app.post('/api/rsvp', function (req, res) {
+    var rsvp = req.body;
+    validateRsvp(rsvp);
+    return db_factory_1.DbFactory.create()
+        .transaction(function (transaction_db) {
+        return transaction_db.sql('save_rsvp', {
+            guest_id: rsvp.guest_id,
+            party_id: rsvp.party_id,
+            party_size: rsvp.party_size,
+            attending: rsvp.attending,
+        });
+    })
+        .then(function (db_res) { return firstRow(db_res); })
+        .then(function (rsvp_res) {
+        if (_.isNil(rsvp_res.guest) || _.isNil(rsvp_res.party)) {
+            throw {
+                status: 400,
+                message: 'Unable to save rsvp',
+            };
+        }
+        return rsvp_res;
+    });
+});
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    console.log("Error [statusCode=" + err.status + "] in request pipeline", {
+        message: err.message,
+        status: err.status,
+        err: err,
+    });
+    return res.json({
+        error: err.message
+    });
+});
 app.listen(process.env.PORT || 4444, function () { return console.log("Listening at http://localhost:" + (process.env.PORT || 4444)); });
 //# sourceMappingURL=app.js.map
