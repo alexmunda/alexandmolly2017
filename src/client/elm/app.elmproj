@@ -3,6 +3,7 @@
    "cache-dependency-resolve": true,
    "main-modules": [
       "./Countdown/Main.elm",
-      "./Photos/Main.elm"
+      "./Photos/Main.elm",
+      "./Rsvp/Main.elm"
    ]
 }

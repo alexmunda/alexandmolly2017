@@ -208,3 +208,16 @@ img {
 .about-molly-alex {
   margin: 0 auto;
 }
+
+.form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guest-form {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 50px 10px;
+  padding: 20px;
+}

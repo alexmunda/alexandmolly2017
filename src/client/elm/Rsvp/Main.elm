@@ -1,125 +1,243 @@
 module Rsvp.Main exposing (..)
 
--- import Html exposing (..)
--- import Html.Attributes exposing (..)
--- import Html.Events exposing (..)
+import Date exposing (..)
+import Form exposing (Form)
+import Form.Validate as Validate exposing (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Http exposing (get, send)
+import Json.Decode as Json
+import Json.Decode.Pipeline as Pipeline exposing (decode)
+import RemoteData exposing (WebData)
+import Util.Extra exposing (..)
 
 
--- main : Program Never Model Msg
--- main =
---     Html.program
---         { init = ( initialModel, Cmd.none )
---         , update = update
---         , view = view
---         , subscriptions = \_ -> Sub.none
---         }
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = ( initialModel, Cmd.none )
+        , update = update
+        , view = view
+        , subscriptions = \_ -> Sub.none
+        }
 
 
--- type Model =
+type alias Rsvp =
+    { guest : Guest
+    , party : Party
+    }
 
 
--- type alias Guest =
---     { firstName : String
---     , lastName : String
---     , id : Int
---     }
+type alias Party =
+    { partyId : Int
+    , displayName : String
+    , maxPartySize : Int
+    , partySize : Int
+    , attending : Maybe Bool
+    , rsvpOn : Maybe Date.Date
+    }
 
 
--- model : Model
--- model =
---     Model [ Guest "" "" 1 ] True
+type alias Guest =
+    { firstName : String
+    , lastName : String
+    , guestId : Int
+    , partyId : Int
+    , rsvpOn : Maybe Date
+    }
 
 
--- type Msg
---     = FirstName Int String
---     | LastName Int String
---     | ToggleAttending Bool
---     | AddGuest
---     | RemoveGuest Int
+type alias FindGuest =
+    { rsvp : RemoteData.WebData Rsvp
+    , findGuestForm : Form () GuestForm
+    }
 
 
--- update : Msg -> Model -> Model
--- update msg model =
---     case msg of
---         FirstName guestId firstName ->
---             let
---                 updateFirstName guest =
---                     if guest.id == guestId then
---                         { guest | firstName = firstName }
---                     else
---                         guest
---             in
---                 { model | guests = List.map updateFirstName model.guests }
-
---         LastName id lastName ->
---             let
---                 updateLastName guest =
---                     if guest.id == id then
---                         { guest | lastName = lastName }
---                     else
---                         guest
---             in
---                 { model | guests = List.map updateLastName model.guests }
-
---         ToggleAttending attending ->
---             { model | attending = attending }
-
---         AddGuest ->
---             let
---                 guest =
---                     Guest "" "" <| List.length model.guests + 1
---             in
---                 { model | guests = model.guests ++ [ guest ] }
-
---         RemoveGuest guestId ->
---             let
---                 removeGuest guest =
---                     guest.id /= guestId
---             in
---                 { model | guests = List.filter removeGuest model.guests }
+type alias RsvpParty =
+    { rsvp : Rsvp
+    , rsvpPartyForm : Form () RsvpForm
+    }
 
 
--- view : Model -> Html Msg
--- view model =
---     div []
---         [ fieldset []
---             [ radio "Attending" <| ToggleAttending True
---             , radio "Not Attending" <| ToggleAttending False
---             ]
---         , div [] (guestList model)
---         , button [ class "btn btn-default", onClick AddGuest ] [ text "Add Guest" ]
---         , div []
---             [ button [ class "btn btn-primary" ] [ text "Submit RSVP" ]
---             ]
---         ]
+type alias GuestForm =
+    { firstName : String
+    , lastName : String
+    }
 
 
--- guestNames : Guest -> Html Msg
--- guestNames guest =
---     div []
---         [ input [ type_ "text", placeholder "First Name", onInput <| FirstName guest.id ] []
---         , input [ type_ "text", placeholder "Last Name", onInput <| LastName guest.id ] []
---         , removeGuestButton guest.id
---         ]
+type alias RsvpForm =
+    { attending : Bool
+    , partySize : Int
+    }
 
 
--- guestList : Model -> List (Html Msg)
--- guestList model =
---     List.map guestNames model.guests
+type Model
+    = FindingGuest FindGuest
+    | RsvpingParty RsvpParty
 
 
--- radio : String -> Msg -> Html Msg
--- radio value msg =
---     label
---         []
---         [ input [ type_ "radio", name "font-size", onClick msg ] []
---         , text value
---         ]
+validateFindGuest : Validation () GuestForm
+validateFindGuest =
+    Validate.map2 GuestForm
+        (Validate.field "first_name" string)
+        (Validate.field "last_name" string)
 
 
--- removeGuestButton : Int -> Html Msg
--- removeGuestButton guestId =
---     if guestId == 1 then
---         span [] []
---     else
---         button [ class "btn btn-danger", onClick <| RemoveGuest guestId ] [ text "Remove Guest" ]
+initialFindGuestForm : Form () GuestForm
+initialFindGuestForm =
+    Form.initial [] validateFindGuest
+
+
+validateRsvpParty : Validation () RsvpForm
+validateRsvpParty =
+    Validate.map2 RsvpForm
+        (Validate.field "attending" bool)
+        (Validate.field "party_size" int)
+
+
+initialRsvpPartyForm : Form () RsvpForm
+initialRsvpPartyForm =
+    Form.initial [] validateRsvpParty
+
+
+initialModel : Model
+initialModel =
+    FindingGuest (FindGuest RemoteData.NotAsked initialFindGuestForm)
+
+
+type Msg
+    = FindGuestFormMsg Form.Msg
+    | RsvpPartyFormMsg Form.Msg
+    | FetchGuestResponse (RemoteData.WebData Rsvp)
+
+
+fromResult : Result String a -> Json.Decoder a
+fromResult result =
+    case result of
+        Ok successValue ->
+            Json.succeed successValue
+
+        Err errorMessage ->
+            Json.fail errorMessage
+
+
+unsafeDate : Json.Decoder Date.Date
+unsafeDate =
+    Json.string
+        |> Json.andThen (Date.fromString >> fromResult)
+
+
+guestDecoder : Json.Decoder Guest
+guestDecoder =
+    decode Guest
+        |> Pipeline.required "first_name" Json.string
+        |> Pipeline.required "last_name" Json.string
+        |> Pipeline.required "guest_id" Json.int
+        |> Pipeline.required "party_id" Json.int
+        |> Pipeline.required "rsvp_on" (Json.maybe unsafeDate)
+
+
+partyDecoder : Json.Decoder Party
+partyDecoder =
+    decode Party
+        |> Pipeline.required "party_id" Json.int
+        |> Pipeline.required "display_name" Json.string
+        |> Pipeline.required "max_party_size" Json.int
+        |> Pipeline.required "party_size" Json.int
+        |> Pipeline.required "attending" (Json.maybe Json.bool)
+        |> Pipeline.required "rsvp_on" (Json.maybe unsafeDate)
+
+
+rsvpDecoder : Json.Decoder Rsvp
+rsvpDecoder =
+    decode Rsvp
+        |> Pipeline.required "guest" guestDecoder
+        |> Pipeline.required "party" partyDecoder
+
+
+fetchGuest : (RemoteData.RemoteData Http.Error Rsvp -> msg) -> GuestForm -> Cmd msg
+fetchGuest typeTransformer guestForm =
+    let
+        url =
+            "/api/guests?first_name=" ++ guestForm.firstName ++ "&last_name=" ++ guestForm.lastName
+    in
+        get url rsvpDecoder |> send (RemoteData.fromResult >> typeTransformer)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case model of
+        FindingGuest findGuest ->
+            case msg of
+                FindGuestFormMsg formMsg ->
+                    let
+                        newForm =
+                            Form.update validateFindGuest formMsg findGuest.findGuestForm
+
+                        formOutput =
+                            case formMsg of
+                                Form.Submit ->
+                                    Form.getOutput newForm
+
+                                _ ->
+                                    Nothing
+                    in
+                        ( FindingGuest { findGuest | findGuestForm = newForm }, formOutput |> Maybe.map (fetchGuest FetchGuestResponse) |> Maybe.withDefault Cmd.none )
+
+                FetchGuestResponse guestResponse ->
+                    case guestResponse of
+                        RemoteData.Success rsvp ->
+                            ( RsvpingParty (RsvpParty rsvp initialRsvpPartyForm), Cmd.none )
+
+                        _ ->
+                            ( FindingGuest { findGuest | rsvp = guestResponse }, Cmd.none )
+
+                RsvpPartyFormMsg _ ->
+                    ( model, Cmd.none )
+
+        RsvpingParty findGuest ->
+            ( model, Cmd.none )
+
+
+renderFindGuestForm : Form () GuestForm -> Html Msg
+renderFindGuestForm findGuestForm =
+    Html.form [ class "form-horizontal guest-form", onSubmit (FindGuestFormMsg Form.Submit) ]
+        [ h4 [ class "row" ]
+            [ div [ class "col-md-12 text-center" ] [ text "RSVP" ]
+            ]
+        , div [ class "row" ]
+            [ div [ class "col-md-12" ]
+                [ Html.map FindGuestFormMsg <|
+                    focusTextGroup "First Name"
+                        (Form.getFieldAsString "first_name" findGuestForm)
+                ]
+            ]
+        , div [ class "row" ]
+            [ div [ class "col-md-12" ]
+                [ Html.map FindGuestFormMsg <|
+                    textGroup "Last Name"
+                        (Form.getFieldAsString "last_name" findGuestForm)
+                ]
+            ]
+        , div [ class "row" ]
+            [ div [ class "col-md-12" ] <|
+                [ button
+                    [ class "btn btn-default"
+                    ]
+                    [ text "Find Invitation" ]
+                ]
+            ]
+        ]
+
+
+view : Model -> Html Msg
+view model =
+    case model of
+        FindingGuest findGuest ->
+            div [ class "form-container" ]
+                [ renderFindGuestForm findGuest.findGuestForm
+                ]
+
+        RsvpingParty rsvpParty ->
+            div [] []
