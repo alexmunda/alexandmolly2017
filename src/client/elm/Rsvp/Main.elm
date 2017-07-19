@@ -236,7 +236,18 @@ view model =
     case model of
         FindingGuest findGuest ->
             div [ class "form-container" ]
-                [ renderFindGuestForm findGuest.findGuestForm
+                [ (if RemoteData.isFailure findGuest.rsvp then
+                    div [ class "guest-error" ]
+                        [ div [ class "alert alert-danger text-center" ]
+                            [ span []
+                                [ text "Unable to find your invitation. Please contact us."
+                                ]
+                            ]
+                        ]
+                   else
+                    text ""
+                  )
+                , renderFindGuestForm findGuest.findGuestForm
                 ]
 
         RsvpingParty rsvpParty ->
