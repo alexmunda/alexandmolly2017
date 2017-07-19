@@ -240,7 +240,9 @@ view model =
                     div [ class "guest-error" ]
                         [ div [ class "alert alert-danger text-center" ]
                             [ span []
-                                [ text "Unable to find your invitation. Please contact us."
+                                [ text "Unable to find your invitation. Please "
+                                , a [ href "mailto:alex.molly.munda@gmail.com" ] [ text "contact us" ]
+                                , text "."
                                 ]
                             ]
                         ]
