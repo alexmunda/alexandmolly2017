@@ -2,6 +2,7 @@ module Rsvp.Main exposing (..)
 
 import Date exposing (..)
 import Form exposing (Form)
+import Form.Field
 import Form.Validate as Validate exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -56,7 +57,8 @@ type alias FindGuest =
 
 type alias RsvpParty =
     { rsvp : Rsvp
-    , rsvpPartyForm : Form () RsvpForm
+    , rsvpForm : RsvpForm
+    , saveRsvp : RemoteData.WebData Rsvp
     }
 
 
@@ -89,27 +91,24 @@ initialFindGuestForm =
     Form.initial [] validateFindGuest
 
 
-validateRsvpParty : Validation () RsvpForm
-validateRsvpParty =
-    Validate.map2 RsvpForm
-        (Validate.field "attending" bool)
-        (Validate.field "party_size" int)
-
-
-initialRsvpPartyForm : Form () RsvpForm
-initialRsvpPartyForm =
-    Form.initial [] validateRsvpParty
-
-
 initialModel : Model
 initialModel =
     FindingGuest (FindGuest RemoteData.NotAsked initialFindGuestForm)
 
 
+type RsvpMsg
+    = IncrementPartySize
+    | DecrementPartySize
+    | Attending
+    | NotAttending
+
+
 type Msg
     = FindGuestFormMsg Form.Msg
-    | RsvpPartyFormMsg Form.Msg
+    | RsvpFormMsg RsvpMsg
     | FetchGuestResponse (RemoteData.WebData Rsvp)
+    | SubmitRsvpForm
+    | SaveRsvpResponse (RemoteData.WebData Rsvp)
 
 
 fromResult : Result String a -> Json.Decoder a
@@ -183,21 +182,76 @@ update msg model =
                                 _ ->
                                     Nothing
                     in
-                        ( FindingGuest { findGuest | findGuestForm = newForm }, formOutput |> Maybe.map (fetchGuest FetchGuestResponse) |> Maybe.withDefault Cmd.none )
+                        ( FindingGuest { findGuest | findGuestForm = newForm }
+                        , formOutput
+                            |> Maybe.map (fetchGuest FetchGuestResponse)
+                            |> Maybe.withDefault Cmd.none
+                        )
 
                 FetchGuestResponse guestResponse ->
                     case guestResponse of
                         RemoteData.Success rsvp ->
-                            ( RsvpingParty (RsvpParty rsvp initialRsvpPartyForm), Cmd.none )
+                            let
+                                initialRsvpForm =
+                                    { attending = True, partySize = rsvp.party.maxPartySize }
+                            in
+                                ( RsvpingParty (RsvpParty rsvp initialRsvpForm RemoteData.NotAsked), Cmd.none )
 
                         _ ->
                             ( FindingGuest { findGuest | rsvp = guestResponse }, Cmd.none )
 
-                RsvpPartyFormMsg _ ->
+                RsvpFormMsg _ ->
                     ( model, Cmd.none )
 
-        RsvpingParty findGuest ->
-            ( model, Cmd.none )
+                SubmitRsvpForm ->
+                    ( model, Cmd.none )
+
+                SaveRsvpResponse _ ->
+                    ( model, Cmd.none )
+
+        RsvpingParty rsvpParty ->
+            case msg of
+                RsvpFormMsg formMsg ->
+                    ( RsvpingParty { rsvpParty | rsvpForm = updateRsvpForm formMsg rsvpParty.rsvpForm rsvpParty.rsvp.party.maxPartySize }, Cmd.none )
+
+                SubmitRsvpForm ->
+                    ( model, Cmd.none )
+
+                SaveRsvpResponse rsvpResponse ->
+                    ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+
+updateRsvpForm : RsvpMsg -> RsvpForm -> Int -> RsvpForm
+updateRsvpForm msg rsvpForm maxPartySize =
+    case msg of
+        IncrementPartySize ->
+            let
+                newPartySize =
+                    if rsvpForm.partySize < maxPartySize then
+                        rsvpForm.partySize + 1
+                    else
+                        rsvpForm.partySize
+            in
+                { rsvpForm | partySize = newPartySize }
+
+        DecrementPartySize ->
+            let
+                newPartySize =
+                    if rsvpForm.partySize > 1 then
+                        rsvpForm.partySize - 1
+                    else
+                        rsvpForm.partySize
+            in
+                { rsvpForm | partySize = newPartySize }
+
+        Attending ->
+            { rsvpForm | attending = True }
+
+        NotAttending ->
+            { rsvpForm | attending = False }
 
 
 renderFindGuestForm : Form () GuestForm -> Html Msg
@@ -221,7 +275,7 @@ renderFindGuestForm findGuestForm =
                 ]
             ]
         , div [ class "row" ]
-            [ div [ class "col-md-12" ] <|
+            [ div [ class "col-md-12" ]
                 [ button
                     [ class "btn btn-default"
                     ]
@@ -229,6 +283,95 @@ renderFindGuestForm findGuestForm =
                 ]
             ]
         ]
+
+
+renderRsvpForm : RsvpForm -> Rsvp -> Html Msg
+renderRsvpForm rsvpForm rsvp =
+    Html.form [ class "form-horizontal guest-form rsvp", onSubmit SubmitRsvpForm ]
+        [ h4 [ class "row" ]
+            [ div [ class "col-md-12 text-center" ] [ text rsvp.party.displayName ]
+            ]
+        , div [ class "row" ]
+            [ div [ class "col-md-12" ]
+                [ div [ class "radio" ]
+                    [ Html.map RsvpFormMsg <|
+                        label [ onClick Attending ]
+                            [ input
+                                [ name "attending"
+                                , type_ "radio"
+                                , checked rsvpForm.attending
+                                ]
+                                []
+                            , span [] [ text "Accepts with pleasure." ]
+                            ]
+                    ]
+                , div [ class "radio" ]
+                    [ Html.map RsvpFormMsg <|
+                        label [ onClick NotAttending ]
+                            [ input
+                                [ name "attending"
+                                , type_ "radio"
+                                , checked (not rsvpForm.attending)
+                                ]
+                                []
+                            , span [] [ text "Declines with regret." ]
+                            ]
+                    ]
+                ]
+            ]
+        , numberOfGuestsRow rsvpForm
+        , div [ class "row rsvp-row" ]
+            [ div [ class "col-md-12" ]
+                [ button
+                    [ class "btn btn-default"
+                    ]
+                    [ text "RSVP" ]
+                ]
+            ]
+        ]
+
+
+numberOfGuestsRow : RsvpForm -> Html Msg
+numberOfGuestsRow rsvpForm =
+    if rsvpForm.attending then
+        div [ class "row rsvp-row" ]
+            [ div [ class "col-md-12" ]
+                [ div [ class "form-group" ]
+                    [ div [ class "col-md-12" ]
+                        [ label [ class "control-label" ] [ text "Number of Guests" ] ]
+                    , div [ class "col-xs-6" ]
+                        [ Html.map RsvpFormMsg <|
+                            div [ class "input-group" ]
+                                [ span [ class "input-group-btn" ]
+                                    [ button
+                                        [ class "btn btn-default btn-number"
+                                        , type_ "button"
+                                        , onClick DecrementPartySize
+                                        , disabled (rsvpForm.partySize == 0)
+                                        ]
+                                        [ i [ class "fa fa-minus" ]
+                                            []
+                                        ]
+                                    ]
+                                , span [ class "form-control input-number text-center" ]
+                                    [ text (toString rsvpForm.partySize) ]
+                                , span [ class "input-group-btn" ]
+                                    [ button
+                                        [ class "btn btn-default btn-number"
+                                        , type_ "button"
+                                        , onClick IncrementPartySize
+                                        ]
+                                        [ i [ class "fa fa-plus" ]
+                                            []
+                                        ]
+                                    ]
+                                ]
+                        ]
+                    ]
+                ]
+            ]
+    else
+        text ""
 
 
 view : Model -> Html Msg
@@ -253,4 +396,19 @@ view model =
                 ]
 
         RsvpingParty rsvpParty ->
-            div [] []
+            div [ class "form-container" ]
+                [ (if RemoteData.isFailure rsvpParty.saveRsvp then
+                    div [ class "guest-error" ]
+                        [ div [ class "alert alert-danger text-center" ]
+                            [ span []
+                                [ text "Unable to save your RSVP. Please "
+                                , a [ href "mailto:alex.molly.munda@gmail.com" ] [ text "contact us" ]
+                                , text "."
+                                ]
+                            ]
+                        ]
+                   else
+                    text ""
+                  )
+                , renderRsvpForm rsvpParty.rsvpForm rsvpParty.rsvp
+                ]

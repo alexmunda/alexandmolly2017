@@ -128,3 +128,17 @@ textGroup label_ state =
     formGroup label_
         state.liveError
         [ Input.textInput state [ class "form-control" ] ]
+
+
+radioGroup : List ( String, String ) -> GroupBuilder String e
+radioGroup options label_ state =
+    let
+        item ( v, l ) =
+            label [ class "radio-inline" ]
+                [ Input.radioInput state.path state [ Html.Attributes.value v ]
+                , text l
+                ]
+    in
+        formGroup label_
+            state.liveError
+            (List.map item options)
