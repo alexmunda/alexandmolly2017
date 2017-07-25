@@ -1,5 +1,5 @@
 INSERT INTO party (party_id, display_name, max_party_size) VALUES
-(1, 'Joe & Sarah Andaverde', 2),
+(1, 'The Andaverde Family', 3),
 (2, 'KC Anuforo & Guest', 2),
 (3, 'Sean & Helen Aucoin', 2),
 (4, 'Dan Baird & Guest', 2),
