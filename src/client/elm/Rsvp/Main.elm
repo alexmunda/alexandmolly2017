@@ -7,9 +7,10 @@ import Form.Validate as Validate exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Http exposing (get, send)
+import Http exposing (get, send, post, jsonBody)
 import Json.Decode as Json
 import Json.Decode.Pipeline as Pipeline exposing (decode)
+import Json.Encode as JE
 import RemoteData exposing (WebData)
 import Util.Extra exposing (..)
 
@@ -77,6 +78,7 @@ type alias RsvpForm =
 type Model
     = FindingGuest FindGuest
     | RsvpingParty RsvpParty
+    | RsvpSuccess
 
 
 validateFindGuest : Validation () GuestForm
@@ -164,6 +166,22 @@ fetchGuest typeTransformer guestForm =
         get url rsvpDecoder |> send (RemoteData.fromResult >> typeTransformer)
 
 
+saveRsvp : (RemoteData.RemoteData Http.Error Rsvp -> msg) -> RsvpForm -> Int -> Int -> Cmd msg
+saveRsvp typeTransformer rsvpForm guestId partyId =
+    let
+        body =
+            jsonBody
+                (JE.object
+                    [ ( "guest_id", JE.int guestId )
+                    , ( "party_id", JE.int partyId )
+                    , ( "attending", JE.bool rsvpForm.attending )
+                    , ( "party_size", JE.int rsvpForm.partySize )
+                    ]
+                )
+    in
+        post "/api/rsvp" body rsvpDecoder |> send (RemoteData.fromResult >> typeTransformer)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
@@ -215,13 +233,25 @@ update msg model =
                     ( RsvpingParty { rsvpParty | rsvpForm = updateRsvpForm formMsg rsvpParty.rsvpForm rsvpParty.rsvp.party.maxPartySize }, Cmd.none )
 
                 SubmitRsvpForm ->
-                    ( model, Cmd.none )
+                    let
+                        { guestId, partyId } =
+                            rsvpParty.rsvp.guest
+                    in
+                        ( model, saveRsvp SaveRsvpResponse rsvpParty.rsvpForm guestId partyId )
 
                 SaveRsvpResponse rsvpResponse ->
-                    ( model, Cmd.none )
+                    case rsvpResponse of
+                        RemoteData.Success rsvp ->
+                            ( RsvpSuccess, Cmd.none )
+
+                        _ ->
+                            ( RsvpingParty { rsvpParty | saveRsvp = rsvpResponse }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
+
+        RsvpSuccess ->
+            ( model, Cmd.none )
 
 
 updateRsvpForm : RsvpMsg -> RsvpForm -> Int -> RsvpForm
@@ -412,3 +442,6 @@ view model =
                   )
                 , renderRsvpForm rsvpParty.rsvpForm rsvpParty.rsvp
                 ]
+
+        RsvpSuccess ->
+            div [] [ text "Way to go, we'll see you on October 28th." ]

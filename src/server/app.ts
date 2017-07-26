@@ -156,7 +156,7 @@ app.post('/api/rsvp', (req, res) => {
       }
     }
 
-    return rsvp_res
+    return res.status(201).json(rsvp_res)
   })
 })
 

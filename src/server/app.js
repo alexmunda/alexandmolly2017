@@ -127,7 +127,7 @@ app.post('/api/rsvp', function (req, res) {
                 message: 'Unable to save rsvp',
             };
         }
-        return rsvp_res;
+        return res.status(201).json(rsvp_res);
     });
 });
 app.use(function (err, req, res, next) {
