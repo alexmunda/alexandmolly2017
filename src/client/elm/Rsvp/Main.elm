@@ -2,7 +2,6 @@ module Rsvp.Main exposing (..)
 
 import Date exposing (..)
 import Form exposing (Form)
-import Form.Field
 import Form.Validate as Validate exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -12,6 +11,8 @@ import Json.Decode as Json
 import Json.Decode.Pipeline as Pipeline exposing (decode)
 import Json.Encode as JE
 import RemoteData exposing (WebData)
+import Svg exposing (svg, circle, path)
+import Svg.Attributes
 import Util.Extra exposing (..)
 
 
@@ -444,4 +445,11 @@ view model =
                 ]
 
         RsvpSuccess ->
-            div [] [ text "Way to go, we'll see you on October 28th." ]
+            div [ class "form-container" ]
+                [ div [ class "rsvp-success" ]
+                    [ svg [ Svg.Attributes.class "checkmark", Svg.Attributes.viewBox "0 0 52 52" ]
+                        [ circle [ Svg.Attributes.class "checkmark-circle", Svg.Attributes.cx "26", Svg.Attributes.cy "26", Svg.Attributes.r "25", Svg.Attributes.fill "none" ] []
+                        , path [ Svg.Attributes.class "checkmark-check", Svg.Attributes.fill "none", Svg.Attributes.d "M14.1 27.2l7.1 7.2 16.7-16.8" ] []
+                        ]
+                    ]
+                ]
