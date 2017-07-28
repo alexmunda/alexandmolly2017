@@ -316,6 +316,23 @@ renderFindGuestForm findGuestForm =
         ]
 
 
+renderRsvpSuccess : Html Msg
+renderRsvpSuccess =
+    div [ class "form-container" ]
+        [ div [ class "rsvp-success" ]
+            [ svg [ Svg.Attributes.class "checkmark", Svg.Attributes.viewBox "0 0 52 52" ]
+                [ circle [ Svg.Attributes.class "checkmark-circle", Svg.Attributes.cx "26", Svg.Attributes.cy "26", Svg.Attributes.r "25", Svg.Attributes.fill "none" ] []
+                , path [ Svg.Attributes.class "checkmark-check", Svg.Attributes.fill "none", Svg.Attributes.d "M14.1 27.2l7.1 7.2 16.7-16.8" ] []
+                ]
+            , h3 [ class "text-center" ] [ text "You're all set!" ]
+            , h4 [ class "text-center" ]
+                [ text "To modify your RSVP, please "
+                , a [ href "mailto:alex.molly.munda@gmail.com" ] [ text "contact us" ]
+                ]
+            ]
+        ]
+
+
 renderRsvpForm : RsvpForm -> Rsvp -> Html Msg
 renderRsvpForm rsvpForm rsvp =
     Html.form [ class "form-horizontal guest-form rsvp", onSubmit SubmitRsvpForm ]
@@ -441,15 +458,10 @@ view model =
                    else
                     text ""
                   )
-                , renderRsvpForm rsvpParty.rsvpForm rsvpParty.rsvp
+                , rsvpParty.rsvp.party.rsvpOn
+                    |> Maybe.map (\_ -> renderRsvpSuccess)
+                    |> Maybe.withDefault (renderRsvpForm rsvpParty.rsvpForm rsvpParty.rsvp)
                 ]
 
         RsvpSuccess ->
-            div [ class "form-container" ]
-                [ div [ class "rsvp-success" ]
-                    [ svg [ Svg.Attributes.class "checkmark", Svg.Attributes.viewBox "0 0 52 52" ]
-                        [ circle [ Svg.Attributes.class "checkmark-circle", Svg.Attributes.cx "26", Svg.Attributes.cy "26", Svg.Attributes.r "25", Svg.Attributes.fill "none" ] []
-                        , path [ Svg.Attributes.class "checkmark-check", Svg.Attributes.fill "none", Svg.Attributes.d "M14.1 27.2l7.1 7.2 16.7-16.8" ] []
-                        ]
-                    ]
-                ]
+            renderRsvpSuccess
