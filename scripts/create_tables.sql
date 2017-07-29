@@ -4,11 +4,12 @@ CREATE TABLE party (
   party_id int NOT NULL,
   display_name text NOT NULL,
   max_party_size int NOT NULL,
-  party_size int NOT NULL DEFAULT 0,
+  party_size int NOT NULL DEFAULT 0 CHECK (party_size >= 0),
   attending boolean NULL,
   rsvp_on timestamp NULL,
 
-  PRIMARY KEY (party_id)
+  PRIMARY KEY (party_id),
+  CHECK (party_size <= max_party_size)
 );
 
 CREATE TABLE guest (

@@ -61,14 +61,17 @@ var firstRow = function (res) {
     return res.rows[0];
 };
 app.get('/api/guests', function (req, res) {
-    var _a = req.query, first_name = _a.first_name, last_name = _a.last_name;
-    if (_.isNil(first_name) || _.isNil(last_name)) {
-        throw new Error('First and last name required.');
-    }
-    return db_factory_1.DbFactory.create()
-        .sql('fetch_guest', {
-        first_name: first_name,
-        last_name: last_name,
+    return Promise.resolve()
+        .then(function () {
+        var _a = req.query, first_name = _a.first_name, last_name = _a.last_name;
+        if (_.isNil(first_name) || _.isNil(last_name)) {
+            throw new Error('First and last name required.');
+        }
+        return db_factory_1.DbFactory.create()
+            .sql('fetch_guest', {
+            first_name: first_name,
+            last_name: last_name,
+        });
     })
         .then(function (db_res) { return firstRow(db_res); })
         .then(function (fetch_result) {
@@ -78,6 +81,10 @@ app.get('/api/guests', function (req, res) {
         return res.status(200).json(fetch_result);
     })
         .catch(function (err) {
+        console.log({
+            err: err,
+            body: req.body
+        });
         return res.status(400).json({ message: err.message });
     });
 });
@@ -103,20 +110,23 @@ var validateRsvp = function (rsvp) {
     if (_.isNil(rsvp.party_size) || !_.isFinite(rsvp.party_size)) {
         throw {
             status: 400,
-            message: 'party_id is required',
+            message: 'party_size is required',
         };
     }
 };
 app.post('/api/rsvp', function (req, res) {
-    var rsvp = req.body;
-    validateRsvp(rsvp);
-    return db_factory_1.DbFactory.create()
-        .transaction(function (transaction_db) {
-        return transaction_db.sql('save_rsvp', {
-            guest_id: rsvp.guest_id,
-            party_id: rsvp.party_id,
-            party_size: rsvp.party_size,
-            attending: rsvp.attending,
+    return Promise.resolve()
+        .then(function () {
+        var rsvp = req.body;
+        validateRsvp(rsvp);
+        return db_factory_1.DbFactory.create()
+            .transaction(function (transaction_db) {
+            return transaction_db.sql('save_rsvp', {
+                guest_id: rsvp.guest_id,
+                party_id: rsvp.party_id,
+                party_size: rsvp.party_size,
+                attending: rsvp.attending,
+            });
         });
     })
         .then(function (db_res) { return firstRow(db_res); })
@@ -128,6 +138,13 @@ app.post('/api/rsvp', function (req, res) {
             };
         }
         return res.status(201).json(rsvp_res);
+    })
+        .catch(function (err) {
+        console.log({
+            err: err,
+            body: req.body
+        });
+        return res.status(400).json({ error: err.message });
     });
 });
 app.use(function (err, req, res, next) {

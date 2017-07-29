@@ -430,8 +430,11 @@ view model =
                 [ (if RemoteData.isFailure findGuest.rsvp then
                     div [ class "guest-error" ]
                         [ div [ class "alert alert-danger text-center" ]
-                            [ span []
-                                [ text "Unable to find your invitation. Please "
+                            [ p []
+                                [ text "Unable to find your invitation."
+                                ]
+                            , p []
+                                [ text "Please "
                                 , a [ href "mailto:alex.molly.munda@gmail.com" ] [ text "contact us" ]
                                 , text "."
                                 ]

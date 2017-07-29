@@ -79,27 +79,34 @@ const firstRow = (res) => {
 }
 
 app.get('/api/guests', (req, res) => {
-  const { first_name, last_name } = req.query
+  return Promise.resolve()
+  .then(() => {
+    const { first_name, last_name } = req.query
 
-  if (_.isNil(first_name) || _.isNil(last_name)) {
-    throw new Error('First and last name required.')
-  }
+    if (_.isNil(first_name) || _.isNil(last_name)) {
+      throw new Error('First and last name required.')
+    }
 
-  return DbFactory.create()
-  .sql('fetch_guest', {
-    first_name: first_name,
-    last_name: last_name,
+    return DbFactory.create()
+    .sql('fetch_guest', {
+      first_name: first_name,
+      last_name: last_name,
+    })
   })
   .then(db_res => firstRow(db_res))
   .then((fetch_result: M.GuestFetch) => {
     if (_.isNil(fetch_result)) {
-      return res.status(404).json({ message: 'Unable to find guest.' })
+      throw new Error('Unable to find guest.')
     }
 
     return res.status(200).json(fetch_result)
   })
   .catch(err => {
-    return res.status(400).json({ message: err.message })
+    console.log({
+      err: err,
+      request_body: req.body
+    })
+    return res.status(404).json({ message: 'Unable to find guest.' })
   })
 })
 
@@ -128,23 +135,26 @@ const validateRsvp = (rsvp: M.Rsvp) => {
   if (_.isNil(rsvp.party_size) || !_.isFinite(rsvp.party_size)) {
     throw {
       status: 400,
-      message: 'party_id is required',
+      message: 'party_size is required',
     }
   }
 }
 
 app.post('/api/rsvp', (req, res) => {
-  const rsvp: M.Rsvp = req.body
+  return Promise.resolve()
+  .then(() => {
+    const rsvp: M.Rsvp = req.body
 
-  validateRsvp(rsvp)
+    validateRsvp(rsvp)
 
-  return DbFactory.create()
-  .transaction((transaction_db) => {
-    return transaction_db.sql('save_rsvp', {
-      guest_id: rsvp.guest_id,
-      party_id: rsvp.party_id,
-      party_size: rsvp.party_size,
-      attending: rsvp.attending,
+    return DbFactory.create()
+    .transaction((transaction_db) => {
+      return transaction_db.sql('save_rsvp', {
+        guest_id: rsvp.guest_id,
+        party_id: rsvp.party_id,
+        party_size: rsvp.party_size,
+        attending: rsvp.attending,
+      })
     })
   })
   .then(db_res => firstRow(db_res))
@@ -152,11 +162,18 @@ app.post('/api/rsvp', (req, res) => {
     if (_.isNil(rsvp_res.guest) || _.isNil(rsvp_res.party)) {
       throw {
         status: 400,
-        message: 'Unable to save rsvp',
+        message: 'Unable to save rsvp.',
       }
     }
 
     return res.status(201).json(rsvp_res)
+  })
+  .catch(err => {
+    console.log({
+      err: err,
+      body: req.body
+    })
+    return res.status(400).json({ error: 'Unable to save rsvp.' })
   })
 })
 
