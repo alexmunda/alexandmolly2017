@@ -76,16 +76,16 @@ app.get('/api/guests', function (req, res) {
         .then(function (db_res) { return firstRow(db_res); })
         .then(function (fetch_result) {
         if (_.isNil(fetch_result)) {
-            return res.status(404).json({ message: 'Unable to find guest.' });
+            throw new Error('Unable to find guest.');
         }
         return res.status(200).json(fetch_result);
     })
         .catch(function (err) {
         console.log({
             err: err,
-            body: req.body
+            request_body: req.body
         });
-        return res.status(400).json({ message: err.message });
+        return res.status(404).json({ message: 'Unable to find guest.' });
     });
 });
 var validateRsvp = function (rsvp) {
@@ -134,7 +134,7 @@ app.post('/api/rsvp', function (req, res) {
         if (_.isNil(rsvp_res.guest) || _.isNil(rsvp_res.party)) {
             throw {
                 status: 400,
-                message: 'Unable to save rsvp',
+                message: 'Unable to save rsvp.',
             };
         }
         return res.status(201).json(rsvp_res);
@@ -144,7 +144,7 @@ app.post('/api/rsvp', function (req, res) {
             err: err,
             body: req.body
         });
-        return res.status(400).json({ error: err.message });
+        return res.status(400).json({ error: 'Unable to save rsvp.' });
     });
 });
 app.use(function (err, req, res, next) {
