@@ -451,8 +451,9 @@ view model =
                 [ (if RemoteData.isFailure rsvpParty.saveRsvp then
                     div [ class "guest-error" ]
                         [ div [ class "alert alert-danger text-center" ]
-                            [ span []
-                                [ text "Unable to save your RSVP. Please "
+                            [ p [] [ text "Unable to save your RSVP." ]
+                            , p []
+                                [ text "Please "
                                 , a [ href "mailto:alex.molly.munda@gmail.com" ] [ text "contact us" ]
                                 , text "."
                                 ]
