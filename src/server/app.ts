@@ -47,23 +47,23 @@ if (process.env.NODE_ENV === 'production') {
 app.disable('x-powered-by')
 
 app.get('/', (req, res) => {
-  res.render('home', { title: 'Molly & Alex' })
+  res.render('home', { title: 'Alex and Molly - October 28th, 2017' })
 })
 
 app.get('/rsvp', (req, res) => {
-  res.render('rsvp', { title: 'RSVP' })
+  res.render('rsvp', { title: 'Alex and Molly - RSVP' })
 })
 
 app.get('/registry', (req, res) => {
-  res.render('registry', { title: 'Registry' })
+  res.render('registry', { title: 'Alex and Molly - Registry' })
 })
 
 app.get('/about', (req, res) => {
-  res.render('about', { title: 'About' })
+  res.render('about', { title: 'Alex and Molly - About' })
 })
 
 app.get('/photos', (req, res) => {
-  res.render('photos', { title: 'Photos' })
+  res.render('photos', { title: 'Alex and Molly - Photos' })
 })
 
 const firstRow = (res) => {

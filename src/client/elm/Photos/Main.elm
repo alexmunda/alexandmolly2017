@@ -201,7 +201,7 @@ renderPhotoCol : Photo -> Html Msg
 renderPhotoCol photo =
     div [ class "col col-sm-3" ]
         [ div [ class "thumbnail", style [ ( "border", "none" ) ] ]
-            [ img [ onClick <| PhotoSelected photo, src photo.url ] []
+            [ img [ onClick <| PhotoSelected photo, src photo.url, alt <| toString photo.index ] []
             ]
         ]
 
