@@ -6,6 +6,7 @@ CREATE TABLE party (
   max_party_size int NOT NULL,
   party_size int NOT NULL DEFAULT 0 CHECK (party_size >= 0),
   attending boolean NULL,
+  comment text NULL,
   rsvp_on timestamp NULL,
 
   PRIMARY KEY (party_id),

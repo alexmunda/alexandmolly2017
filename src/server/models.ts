@@ -12,6 +12,7 @@ export interface Party {
   max_party_size: number
   party_size: number
   attending: boolean
+  comment: string
   rsvp_on: Date
 }
 
@@ -25,4 +26,5 @@ export interface Rsvp {
   party_id: number
   attending: boolean
   party_size: number
+  comment: string
 }

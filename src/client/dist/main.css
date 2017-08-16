@@ -2592,6 +2592,8 @@ img {
 
 .rsvp-row {
   margin-top: 20px; }
+  .rsvp-row.row-ten {
+    margin-top: 10px; }
 
 .rsvp-success {
   margin-top: 100px;

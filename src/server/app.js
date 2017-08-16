@@ -126,6 +126,7 @@ app.post('/api/rsvp', function (req, res) {
                 party_id: rsvp.party_id,
                 party_size: rsvp.party_size,
                 attending: rsvp.attending,
+                comment: rsvp.comment,
             });
         });
     })

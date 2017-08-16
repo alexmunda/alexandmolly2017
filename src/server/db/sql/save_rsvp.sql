@@ -9,6 +9,7 @@ WITH updated_guest AS (
   UPDATE party AS p
   SET party_size = :party_size,
     attending = :attending,
+    comment = :comment,
     rsvp_on = now()
   FROM guest g
   WHERE p.party_id = :party_id

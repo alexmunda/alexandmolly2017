@@ -11,6 +11,7 @@ import Json.Decode as Json
 import Json.Decode.Pipeline as Pipeline exposing (decode)
 import Json.Encode as JE
 import RemoteData exposing (WebData)
+import String
 import Svg exposing (svg, circle, path)
 import Svg.Attributes
 import Util.Extra exposing (..)
@@ -38,6 +39,7 @@ type alias Party =
     , maxPartySize : Int
     , partySize : Int
     , attending : Maybe Bool
+    , comment : Maybe String
     , rsvpOn : Maybe Date.Date
     }
 
@@ -73,6 +75,7 @@ type alias GuestForm =
 type alias RsvpForm =
     { attending : Bool
     , partySize : Int
+    , comment : Maybe String
     }
 
 
@@ -104,6 +107,7 @@ type RsvpMsg
     | DecrementPartySize
     | Attending
     | NotAttending
+    | CommentUpdated String
 
 
 type Msg
@@ -148,6 +152,7 @@ partyDecoder =
         |> Pipeline.required "max_party_size" Json.int
         |> Pipeline.required "party_size" Json.int
         |> Pipeline.required "attending" (Json.maybe Json.bool)
+        |> Pipeline.required "comment" (Json.maybe Json.string)
         |> Pipeline.required "rsvp_on" (Json.maybe unsafeDate)
 
 
@@ -177,6 +182,11 @@ saveRsvp typeTransformer rsvpForm guestId partyId =
                     , ( "party_id", JE.int partyId )
                     , ( "attending", JE.bool rsvpForm.attending )
                     , ( "party_size", JE.int rsvpForm.partySize )
+                    , ( "comment"
+                      , rsvpForm.comment
+                            |> Maybe.map JE.string
+                            |> Maybe.withDefault JE.null
+                      )
                     ]
                 )
     in
@@ -212,7 +222,7 @@ update msg model =
                         RemoteData.Success rsvp ->
                             let
                                 initialRsvpForm =
-                                    { attending = True, partySize = rsvp.party.maxPartySize }
+                                    { attending = True, partySize = rsvp.party.maxPartySize, comment = Nothing }
                             in
                                 ( RsvpingParty (RsvpParty rsvp initialRsvpForm RemoteData.NotAsked), Cmd.none )
 
@@ -283,6 +293,16 @@ updateRsvpForm msg rsvpForm maxPartySize =
 
         NotAttending ->
             { rsvpForm | attending = False }
+
+        CommentUpdated comment ->
+            let
+                updatedComment =
+                    if String.isEmpty comment then
+                        Nothing
+                    else
+                        Just comment
+            in
+                { rsvpForm | comment = updatedComment }
 
 
 renderFindGuestForm : Form () GuestForm -> Html Msg
@@ -368,6 +388,15 @@ renderRsvpForm rsvpForm rsvp =
                 ]
             ]
         , numberOfGuestsRow rsvpForm
+        , div [ class "row rsvp-row row-ten" ]
+            [ div [ class "col-md-12" ]
+                [ div [ class "form-group" ]
+                    [ div [ class "col-md-12" ]
+                        [ label [ class "control-label" ] [ text "Please share any dietary restrictions" ] ]
+                    , div [ class "col-md-12" ] [ Html.map RsvpFormMsg <| textarea [ class "form-control", spellcheck True, onInput CommentUpdated ] [] ]
+                    ]
+                ]
+            ]
         , div [ class "row rsvp-row" ]
             [ div [ class "col-md-12" ]
                 [ button
