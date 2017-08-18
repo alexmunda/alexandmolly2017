@@ -47,15 +47,23 @@
   font-size: 16px;
 }
 
+.registry-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .cb-image {
   margin-top: 50px;
-  max-height: 130.55px;
+  margin-right: 20px;
+  margin-left: 20px;
   max-width: 390px;
 }
 
 .target-image {
-  margin-top: 78px;
-  max-height: 130.55px;
+  margin-top: 50px;
+  margin-right: 20px;
+  margin-left: 20px;
   max-width: 390px;
 }
 
