@@ -104,7 +104,8 @@ INSERT INTO party (party_id, display_name, max_party_size) VALUES
 (103, 'Jackie Washutt & Guest', 2),
 (104, 'Ron & Carlie Wike', 2),
 (105, 'Cathy Wood & Guest', 2),
-(106, 'Bob & Linda Zuchowski', 2);
+(106, 'Bob & Linda Zuchowski', 2)
+(107, 'Jordan Marquess & Guest', 2);
 
 INSERT INTO guest (party_id, first_name, last_name) VALUES
 (1, 'Joe', 'Andaverde'),
@@ -280,4 +281,5 @@ INSERT INTO guest (party_id, first_name, last_name) VALUES
 (104, 'Carlie', 'Wike'),
 (105, 'Cathy', 'Wood'),
 (106, 'Bob', 'Zuchowski'),
-(106, 'Linda', 'Zuchowski');
+(106, 'Linda', 'Zuchowski')
+(107, 'Jordan', 'Marquess');
