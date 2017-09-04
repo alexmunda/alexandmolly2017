@@ -10,6 +10,7 @@ import Http exposing (get, send, post, jsonBody)
 import Json.Decode as Json
 import Json.Decode.Pipeline as Pipeline exposing (decode)
 import Json.Encode as JE
+import Ports.Location as Location
 import RemoteData exposing (WebData)
 import String
 import Svg exposing (svg, circle, path)
@@ -253,7 +254,7 @@ update msg model =
                 SaveRsvpResponse rsvpResponse ->
                     case rsvpResponse of
                         RemoteData.Success rsvp ->
-                            ( RsvpSuccess, Cmd.none )
+                            ( RsvpSuccess, Location.goTo "/accommodations" )
 
                         _ ->
                             ( RsvpingParty { rsvpParty | saveRsvp = rsvpResponse }, Cmd.none )

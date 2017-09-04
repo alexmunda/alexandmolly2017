@@ -3,3 +3,11 @@ export function subscribeEnableScroll(elmApp) {
       document.body.style.overflow = enable ? "auto" : "hidden"
    })
 }
+
+export function subscribeGoTo(elmApp) {
+   elmApp.ports.goTo.subscribe(function(url) {
+      setTimeout(function() {
+         window.location = url
+      }, 1000)
+   })
+}
