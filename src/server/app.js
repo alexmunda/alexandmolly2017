@@ -51,6 +51,9 @@ app.get('/about', function (req, res) {
 app.get('/photos', function (req, res) {
     res.render('photos', { title: 'Alex and Molly - Photos' });
 });
+app.get('/accommodations', function (req, res) {
+    res.render('accommodations', { title: 'Alex and Molly - accommodations' });
+});
 var firstRow = function (res) {
     if (res.rows.length > 1) {
         throw new Error('Multiple rows found, but expected only one.');

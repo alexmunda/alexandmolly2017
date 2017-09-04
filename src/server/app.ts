@@ -66,6 +66,10 @@ app.get('/photos', (req, res) => {
   res.render('photos', { title: 'Alex and Molly - Photos' })
 })
 
+app.get('/accommodations', (req, res) => {
+  res.render('accommodations', { title: 'Alex and Molly - accommodations' })
+})
+
 const firstRow = (res) => {
   if (res.rows.length > 1) {
     throw new Error('Multiple rows found, but expected only one.')
