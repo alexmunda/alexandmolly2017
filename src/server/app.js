@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var static_1 = require("./static");
 var db_factory_1 = require("./db/db_factory");
 var _ = require("lodash");
+var config_1 = require("./config");
 var bodyParser = require('body-parser');
 var express = require('express');
 var Path = require('path');
@@ -151,6 +152,20 @@ app.post('/api/rsvp', function (req, res) {
         return res.status(400).json({ error: 'Unable to save rsvp.' });
     });
 });
+var rsvpsBasicAuth = function (req, res) {
+    var base_64_auth_header = _.get(req.headers, 'authorization', '').split(' ')[1] || '';
+    var _a = new Buffer(base_64_auth_header, 'base64').toString().split(':'), username = _a[0], password = _a[1];
+    if (username === 'molly' && password === config_1.default.RSVP_BASIC_AUTH_PASSWORD) {
+        return db_factory_1.DbFactory.create().sql('retrieve_rsvps')
+            .then(function (db_res) { return firstRow(db_res); })
+            .then(function (rsvps) {
+            return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvps });
+        });
+    }
+    res.set('WWW-Authenticate', 'Basic');
+    return res.status(401).json({ error: { message: 'Unauthorized' } });
+};
+app.get('/view_rsvps', rsvpsBasicAuth);
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     console.log("Error [statusCode=" + err.status + "] in request pipeline", {

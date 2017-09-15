@@ -2,6 +2,7 @@ import { StaticAssets } from './static'
 import { DbFactory } from './db/db_factory'
 import * as M from './models'
 import * as _ from 'lodash'
+import Config from './config'
 
 const bodyParser = require('body-parser')
 const express = require('express')
@@ -181,6 +182,24 @@ app.post('/api/rsvp', (req, res) => {
     return res.status(400).json({ error: 'Unable to save rsvp.' })
   })
 })
+
+const rsvpsBasicAuth = (req, res) => {
+  const base_64_auth_header = _.get(req.headers, 'authorization', '').split(' ')[1] || ''
+  const [username, password] = new Buffer(base_64_auth_header, 'base64').toString().split(':')
+
+  if (username === 'molly' && password === Config.RSVP_BASIC_AUTH_PASSWORD) {
+    return DbFactory.create().sql('retrieve_rsvps')
+    .then(db_res => firstRow(db_res))
+    .then(rsvps => {
+      return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvps })
+    })
+  }
+
+  res.set('WWW-Authenticate', 'Basic')
+  return res.status(401).json({ error: { message: 'Unauthorized' } })
+}
+
+app.get('/view_rsvps', rsvpsBasicAuth)
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500)

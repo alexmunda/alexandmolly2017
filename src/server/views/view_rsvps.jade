@@ -1,0 +1,42 @@
+extends page
+
+block maincontent
+  header#header-navbar
+
+  .container
+    .row
+      .col-xs-4
+        h2.text-center #{rsvp_res.num_attending} Attending
+      .col-xs-4
+        h2.text-center #{rsvp_res.num_not_attending} Not Attending
+      .col-xs-4
+        h2.text-center #{rsvp_res.max_num_not_rsvped} Yet to RSVP
+    .row
+      .col-xs-12
+        .h4.text-center RSVP Received
+    table.table
+      tr
+        th Name
+        th Party Size
+        th Attending
+        th Comment
+        th RSVP On
+      each rsvp in rsvp_res.rsvped_parties
+        tr
+          td
+            = rsvp.display_name
+          td
+            = rsvp.party_size
+          td
+            = rsvp.attending
+          td
+            = rsvp.comment
+          td
+            = new Date(rsvp.rsvp_on)
+    .row
+      .col-xs-12
+        .h4 No RSVP Yet
+        ul
+        each rsvp in rsvp_res.non_rsvped_parties
+          li
+            = rsvp.display_name
