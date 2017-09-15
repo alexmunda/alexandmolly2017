@@ -167,7 +167,7 @@ var rsvpsBasicAuth = function (req, res) {
         return db_factory_1.DbFactory.create().sql('retrieve_rsvps')
             .then(function (db_res) { return firstRow(db_res); })
             .then(function (rsvps) {
-            var ordered_rsvped_parties = _.sortBy(rsvps.rsvped_parties, function (rsvped_party) { return rsvped_party.rsvp_on; });
+            var ordered_rsvped_parties = _.sortBy(rsvps.rsvped_parties, function (rsvped_party) { return new Date(rsvped_party.rsvp_on); });
             var rsvp_res = __assign({}, rsvps, { rsvped_parties: ordered_rsvped_parties });
             return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvp_res });
         });
