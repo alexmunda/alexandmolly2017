@@ -1,4 +1,12 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var static_1 = require("./static");
 var db_factory_1 = require("./db/db_factory");
@@ -159,7 +167,9 @@ var rsvpsBasicAuth = function (req, res) {
         return db_factory_1.DbFactory.create().sql('retrieve_rsvps')
             .then(function (db_res) { return firstRow(db_res); })
             .then(function (rsvps) {
-            return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvps });
+            var ordered_rsvped_parties = _.sortBy(rsvps.rsvped_parties, function (rsvped_party) { return rsvped_party.rsvp_on; });
+            var rsvp_res = __assign({}, rsvps, { rsvped_parties: ordered_rsvped_parties });
+            return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvp_res });
         });
     }
     res.set('WWW-Authenticate', 'Basic');

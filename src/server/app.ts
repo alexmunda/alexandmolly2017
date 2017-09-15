@@ -191,7 +191,12 @@ const rsvpsBasicAuth = (req, res) => {
     return DbFactory.create().sql('retrieve_rsvps')
     .then(db_res => firstRow(db_res))
     .then(rsvps => {
-      return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvps })
+      const ordered_rsvped_parties = _.sortBy(rsvps.rsvped_parties, (rsvped_party: any) => rsvped_party.rsvp_on)
+      const rsvp_res = {
+        ...rsvps,
+        rsvped_parties: ordered_rsvped_parties,
+      }
+      return res.render('view_rsvps', { title: 'Alex and Molly - RSVP', rsvp_res: rsvp_res })
     })
   }
 
