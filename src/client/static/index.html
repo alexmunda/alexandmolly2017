@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <title>Alex and Molly - October 28th, 2017</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Alex Munda and Molly DiGiacinto's wedding website. RSVP, view photos, and check out the registry.">
+  <meta name="keywords" content="Alex Munda, Molly DiGiacinto, October 28, Wedding">
+  <meta name="author" content="Alex Munda">
+  <link rel="stylesheet" type="text/css" href="dist/stylesheets/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="dist/main.css">
+</head>
+
+<body>
+  <div id="page-container">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigationbar">
+            <span class="sr-only">
+              Toggle Navigation
+            </span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">Alex & Molly</a>
+        </div>
+        <div id="navigationbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="about.html">About</a>
+            </li>
+            <li>
+              <a href="registry.html">Registry</a>
+            </li>
+            <li>
+              <a href="photos.html">Photos</a>
+            </li>
+            <li>
+              <a href="rsvp.html">RSVP</a>
+            </li>
+            <li>
+              <a href="accommodations.html">Accommodations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="main-container">
+      <ul id="home-background" class="home-background">
+        <li id="home-background-image"></li>
+        <li>Alex and Molly - October 28, 2017. Leawood, KS</li>
+      </ul>
+      <div class="page-content" id="elm-container"></div>
+    </div>
+  </div>
+  <script>
+    window.alexandmolly = window.alexandmolly || {}
+  </script>
+  <script src="dist/main.js"></script>
+  <script>
+    window.alexandmolly.main.Countdown(document.getElementById('elm-container'))
+  </script>
+</body>
+
+</html>

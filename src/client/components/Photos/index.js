@@ -6,3 +6,9 @@ export function Photos(container) {
 
    Ports.subscribeEnableScroll(elmApp)
 }
+
+export function PhotosStatic(container) {
+   const elmApp = Elm.Photos.Static.Main.embed(container)
+
+   Ports.subscribeEnableScroll(elmApp)
+}

@@ -4,6 +4,8 @@
    "main-modules": [
       "./Countdown/Main.elm",
       "./Photos/Main.elm",
-      "./Rsvp/Main.elm"
+      "./Photos/Static/Main.elm",
+      "./Rsvp/Main.elm",
+      "./Rsvp/Static/Main.elm"
    ]
 }
