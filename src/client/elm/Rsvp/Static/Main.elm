@@ -86,6 +86,27 @@ type Model
     | RsvpSuccess
 
 
+fakeRsvp : GuestForm -> Rsvp
+fakeRsvp guestForm =
+    { guest =
+        { firstName = guestForm.firstName
+        , lastName = guestForm.lastName
+        , guestId = 1
+        , partyId = 1
+        , rsvpOn = Nothing
+        }
+    , party =
+        { partyId = 1
+        , displayName = "Fake Party"
+        , maxPartySize = 2
+        , partySize = 0
+        , attending = Nothing
+        , comment = Nothing
+        , rsvpOn = Nothing
+        }
+    }
+
+
 validateFindGuest : Validation () GuestForm
 validateFindGuest =
     Validate.map2 GuestForm
@@ -211,12 +232,13 @@ update msg model =
 
                                 _ ->
                                     Nothing
+
+                        newModel =
+                            FindingGuest { findGuest | findGuestForm = newForm }
                     in
-                        ( FindingGuest { findGuest | findGuestForm = newForm }
-                        , formOutput
-                            |> Maybe.map (fetchGuest FetchGuestResponse)
-                            |> Maybe.withDefault Cmd.none
-                        )
+                        formOutput
+                            |> Maybe.map (fakeRsvp >> (\rsvp -> update (FetchGuestResponse (RemoteData.succeed rsvp)) newModel))
+                            |> Maybe.withDefault ( newModel, Cmd.none )
 
                 FetchGuestResponse guestResponse ->
                     case guestResponse of
@@ -248,13 +270,27 @@ update msg model =
                     let
                         { guestId, partyId } =
                             rsvpParty.rsvp.guest
+
+                        fake : Rsvp
+                        fake =
+                            { guest = rsvpParty.rsvp.guest
+                            , party =
+                                { partyId = rsvpParty.rsvp.party.partyId
+                                , comment = rsvpParty.rsvpForm.comment
+                                , displayName = rsvpParty.rsvp.party.displayName
+                                , maxPartySize = rsvpParty.rsvp.party.maxPartySize
+                                , partySize = rsvpParty.rsvp.party.partySize
+                                , attending = Just rsvpParty.rsvpForm.attending
+                                , rsvpOn = Nothing
+                                }
+                            }
                     in
-                        ( model, saveRsvp SaveRsvpResponse rsvpParty.rsvpForm guestId partyId )
+                        update (SaveRsvpResponse <| RemoteData.succeed fake) model
 
                 SaveRsvpResponse rsvpResponse ->
                     case rsvpResponse of
                         RemoteData.Success rsvp ->
-                            ( RsvpSuccess, Location.goTo "/accommodations" )
+                            ( RsvpSuccess, Location.goTo "accommodations.html" )
 
                         _ ->
                             ( RsvpingParty { rsvpParty | saveRsvp = rsvpResponse }, Cmd.none )

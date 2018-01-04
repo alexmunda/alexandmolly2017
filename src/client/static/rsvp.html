@@ -50,11 +50,15 @@
         </div>
       </div>
     </nav>
+    <div class="page-content" id="elm-container"></div>
   </div>
   <script>
     window.alexandmolly = window.alexandmolly || {}
   </script>
   <script src="dist/main.js"></script>
+  <script>
+    window.alexandmolly.main.RsvpStatic(document.getElementById('elm-container'))
+  </script>
 </body>
 
 </html>
